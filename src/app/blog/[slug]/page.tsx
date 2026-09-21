@@ -5,7 +5,6 @@ import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/blog";
 import ReadingProgress from "@/components/ReadingProgress";
 import TableOfContents from "@/components/TableOfContents";
 import MarkdownContent from "@/components/MarkdownContent";
-import "../blog.css";
 
 type Props = {
   params: Promise<{ slug: string }>;

@@ -126,12 +126,32 @@ export default function ProjectViewer({
         aria-modal="true"
         aria-labelledby="project-modal-title"
       >
-        {/* ── Navigation bar ── */}
+        {/* ═══════ Navigation bar (بالای modal) ═══════ */}
         <div className="project-modal-nav">
-          <span className="project-modal-nav-counter">
-            {String(index + 1).padStart(2, "0")} /{" "}
-            {String(total).padStart(2, "0")}
-          </span>
+          <div className="project-modal-nav-left">
+            <span className="project-modal-nav-counter">
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(total).padStart(2, "0")}
+            </span>
+
+            {project.liveDemoUrl && (
+              <a
+                href={project.liveDemoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="project-modal-nav-demo"
+              >
+                <span
+                  className="project-modal-nav-demo-dot"
+                  aria-hidden="true"
+                />
+                <span className="project-modal-nav-demo-text">
+                  مشاهده دموی زنده
+                </span>
+                <ExternalIcon />
+              </a>
+            )}
+          </div>
 
           <div className="project-modal-nav-buttons">
             <button
@@ -164,9 +184,8 @@ export default function ProjectViewer({
           </div>
         </div>
 
-        {/* ── Main content ── */}
+        {/* ═══════ Main content ═══════ */}
         <div className="project-modal-main">
-          {/* ── Visual ── */}
           <div className="project-modal-visual">
             {project.coverImage ? (
               /* eslint-disable-next-line @next/next/no-img-element */
@@ -183,7 +202,6 @@ export default function ProjectViewer({
               </>
             )}
 
-            {/* ── Metrics overlay (اگه case study داره) ── */}
             {project.caseStudy?.metrics &&
               project.caseStudy.metrics.length > 0 && (
                 <div className="project-modal-metrics">
@@ -200,7 +218,6 @@ export default function ProjectViewer({
               )}
           </div>
 
-          {/* ── Body ── */}
           <div className="project-modal-body">
             <span
               className="section-index"
@@ -211,7 +228,6 @@ export default function ProjectViewer({
 
             <h2 id="project-modal-title">{project.title}</h2>
 
-            {/* Category + Subtitle */}
             <div className="project-modal-subtitle">
               <span>{project.category}</span>
               {project.year && (
@@ -230,10 +246,8 @@ export default function ProjectViewer({
 
             <p>{project.description}</p>
 
-            {/* ═══════ CASE STUDY SECTIONS ═══════ */}
             {project.caseStudy && (
               <div className="project-case-study">
-                {/* Overview */}
                 {project.caseStudy.overview && (
                   <div className="case-study-section">
                     <h3 className="case-study-heading">
@@ -244,7 +258,6 @@ export default function ProjectViewer({
                   </div>
                 )}
 
-                {/* Challenge */}
                 {project.caseStudy.challenge && (
                   <div className="case-study-section">
                     <h3 className="case-study-heading">
@@ -255,7 +268,6 @@ export default function ProjectViewer({
                   </div>
                 )}
 
-                {/* Approach */}
                 {project.caseStudy.approach &&
                   project.caseStudy.approach.length > 0 && (
                     <div className="case-study-section">
@@ -271,7 +283,6 @@ export default function ProjectViewer({
                     </div>
                   )}
 
-                {/* Highlights */}
                 {project.caseStudy.highlights &&
                   project.caseStudy.highlights.length > 0 && (
                     <div className="case-study-section">
@@ -287,7 +298,6 @@ export default function ProjectViewer({
                     </div>
                   )}
 
-                {/* Learnings */}
                 {project.caseStudy.learnings && (
                   <div className="case-study-section case-study-section--quote">
                     <h3 className="case-study-heading">
@@ -300,7 +310,6 @@ export default function ProjectViewer({
               </div>
             )}
 
-            {/* ── Technologies ── */}
             {project.technologies && project.technologies.length > 0 && (
               <div className="project-modal-tech">
                 <span className="project-modal-tech-label">
@@ -316,7 +325,6 @@ export default function ProjectViewer({
               </div>
             )}
 
-            {/* ── Meta grid ── */}
             <div className="project-modal-meta-grid">
               <div>
                 <span>دسته‌بندی</span>
@@ -336,12 +344,9 @@ export default function ProjectViewer({
               </div>
             </div>
 
-            {/* ── Actions ── */}
+            {/* ── Actions (پایین modal) ── */}
             <div className="project-modal-actions">
-              <a
-                href="/order"
-                className="button button-primary"
-              >
+              <a href="/order" className="button button-primary">
                 پروژه‌ای مشابه می‌خواهم
                 <span aria-hidden="true">←</span>
               </a>
@@ -378,6 +383,24 @@ function ShareIcon() {
       <circle cx="18" cy="19" r="3" />
       <line x1="8.6" y1="13.5" x2="15.4" y2="17.5" />
       <line x1="15.4" y1="6.5" x2="8.6" y2="10.5" />
+    </svg>
+  );
+}
+
+function ExternalIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
     </svg>
   );
 }

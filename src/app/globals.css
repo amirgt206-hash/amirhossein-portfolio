@@ -13389,3 +13389,134 @@ a[href="/order"] {
         padding-right: 15px;
     }
 }
+/* ═══════════════════════════════════════════════
+   LIVE DEMO BUTTON — Project Viewer Actions
+   ═══════════════════════════════════════════════ */
+
+.project-modal-actions .button-secondary {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
+.project-modal-actions .button-secondary:hover {
+  background: var(--paper-2);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.project-modal-actions .button svg {
+  transition: transform 250ms var(--ease-out);
+}
+
+.project-modal-actions .button:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* اطمینان از اینکه دکمه Live Demo عرض کافی داره */
+.project-modal-actions .button-primary {
+  white-space: nowrap;
+}
+
+/* در حالت RTL، فاصله‌ی مناسب برای آیکون */
+.project-modal-actions .button svg {
+  margin-inline-start: 6px;
+}
+/* ═══════════════════════════════════════════════
+   LIVE DEMO BUTTON — بالای Project Modal
+   ═══════════════════════════════════════════════ */
+
+.project-modal-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.project-modal-nav-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 18px -6px var(--accent-glow);
+  transition:
+    background-color 250ms var(--ease-out),
+    box-shadow 300ms var(--ease-out),
+    transform 250ms var(--ease-out);
+}
+
+.project-modal-nav-demo:hover {
+  background: var(--accent-2);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 26px -8px var(--accent-glow);
+}
+
+.project-modal-nav-demo svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  transition: transform 250ms var(--ease-out);
+}
+
+.project-modal-nav-demo:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ── پالس نقطه‌ی زنده ── */
+.project-modal-nav-demo-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  animation: livePulse 2s var(--ease-out) infinite;
+  flex-shrink: 0;
+}
+
+@keyframes livePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* ── موبایل: کوچیک‌تر ── */
+@media (max-width: 640px) {
+  .project-modal-nav-demo {
+    padding: 7px 12px;
+    gap: 6px;
+  }
+
+  .project-modal-nav-demo .project-modal-nav-demo-text {
+    font-size: 11.5px;
+  }
+}
+
+/* ── موبایل خیلی کوچیک: فقط آیکون ── */
+@media (max-width: 420px) {
+  .project-modal-nav-demo .project-modal-nav-demo-text {
+    display: none;
+  }
+
+  .project-modal-nav-demo {
+    padding: 7px 10px;
+  }
+}
