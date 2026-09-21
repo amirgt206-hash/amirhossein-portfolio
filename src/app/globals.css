@@ -13299,3 +13299,93 @@ a[href="/order"] {
     transition: none;
   }
 }
+/* =========================================
+   استایل مخصوص تایپوگرافی هیرو (بخش اصلی سایت)
+   ========================================= */
+
+.hero-typography {
+    /* ۱. تنظیمات پایه و فونت (فونت فعلی حفظ میشه) */
+    font-family: inherit; 
+    direction: rtl;
+    text-align: right;
+    color: #1a1a1a;
+    
+    /* ۲. سایز ریسپانسیو (تغییر خودکار سایز بر اساس موبایل و دسکتاپ) */
+    font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+    
+    /* ۳. فاصله‌گذاری حرفه‌ای */
+    line-height: 1.9; /* فاصله بین دو خط برای خوانایی بهتر */
+    letter-spacing: -0.5px; /* کمی نزدیک کردن حروف برای حس مدرن */
+    
+    /* ۴. ایجاد یک باکس شیک (Glassmorphism) برای جدا شدن از طرح موج‌دار پس‌زمینه */
+    background: rgba(255, 255, 255, 0.75); /* پس‌زمینه سفید نیمه شفاف */
+    backdrop-filter: blur(12px); /* افکت شیشه‌ای */
+    -webkit-backdrop-filter: blur(12px);
+    padding: 30px 40px;
+    border-radius: 20px; /* گوشه‌های گرد */
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06); /* سایه ملایم و عمیق */
+    
+    /* ۵. چیدمان و موقعیت‌دهی */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* فاصله بین دو خط */
+    max-width: 600px; /* جلوگیری از کشیده شدن بیش از حد متن */
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+/* اضافه کردن خط تأکید قرمز رنگ در سمت راست باکس */
+.hero-typography::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 6px;
+    background: #e63946; /* رنگ قرمز برندت */
+    border-radius: 6px 0 0 6px;
+}
+
+/* ۶. استایل بخش اول: کمرنگ، معمولی و آرام */
+.hero-typography .muted-text {
+    font-weight: 400;
+    color: #64748b; /* رنگ طوسی-آبی برای حس مدرن */
+    display: block;
+}
+
+/* ۷. استایل بخش دوم: ضخیم، ماندگار و پررنگ */
+.hero-typography .highlight-text {
+    font-weight: 900; /* ضخیم‌ترین وزن فونت فعلی */
+    color: #0f172a; /* مشکی عمیق */
+    display: inline-block;
+    position: relative;
+    padding-right: 25px; /* تو رفتگی (Indent) برای ایجاد ریتم بصری */
+    
+    /* ایجاد افکت گرادیانت روی متن (از مشکی به قرمز تیره) */
+    background: linear-gradient(135deg, #0f172a 30%, #e63946 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* انیمیشن ملایم */
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* افکت هاور (وقتی ماوس روی متن ماندگار میره) */
+.hero-typography:hover .highlight-text {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 10px 15px rgba(230, 57, 70, 0.2));
+}
+
+/* ۸. تنظیمات مخصوص موبایل (واکنش‌گرایی) */
+@media (max-width: 768px) {
+    .hero-typography {
+        padding: 20px 25px;
+        font-size: 1.3rem;
+        line-height: 1.8;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+    .hero-typography .highlight-text {
+        padding-right: 15px;
+    }
+}
