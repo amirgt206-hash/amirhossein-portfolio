@@ -1,0 +1,132 @@
+import Link from "next/link";
+
+const footerNav = [
+  { label: "خانه", href: "#home" },
+  { label: "خدمات", href: "#services" },
+  { label: "نمونه‌کارها", href: "#portfolio" },
+  { label: "درباره من", href: "#about" },
+];
+
+export default function Footer() {
+  const contactEmail = process.env.PROJECT_CONTACT_EMAIL;
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        {/* ── CTA Block: Let's build ── */}
+        <div className="footer-cta">
+          <span className="section-index" style={{ marginBottom: 0 }}>
+            NEXT — STEP
+          </span>
+
+          <h2 className="footer-cta-title">
+            ایده‌ای داری؟
+            <br />
+            <em>بیایید بسازیمش.</em>
+          </h2>
+
+          <div className="footer-cta-actions">
+            <Link href="/order" className="button button-primary button-lg">
+              شروع پروژه
+              <span aria-hidden="true">←</span>
+            </Link>
+
+            <a href="#portfolio" className="button button-secondary button-lg">
+              مشاهده نمونه‌کارها
+            </a>
+          </div>
+        </div>
+
+        {/* ── Main footer content ── */}
+        <div className="footer-main">
+          {/* ── Brand column ── */}
+          <div className="footer-brand-block">
+            <div className="footer-brand">
+              <span className="footer-mark" aria-hidden="true">
+                ا
+              </span>
+
+              <div>
+                <strong>امیرحسین شرکائی</strong>
+                <span>AMIRHOSSEIN SHERKAEI</span>
+              </div>
+            </div>
+
+            <p className="footer-tagline">
+              طراحی و توسعه وب‌سایت‌های اختصاصی، همراه با خلق تجربه‌های
+              بصری و تبلیغاتی با کمک هوش مصنوعی.
+            </p>
+
+            <span className="footer-signature" aria-hidden="true">
+              <SignatureMark />
+            </span>
+          </div>
+
+          {/* ── Navigation + contact column ── */}
+          <div className="footer-nav-block">
+            <nav className="footer-nav" aria-label="ناوبری پایین صفحه">
+              <span className="footer-nav-label">PAGES</span>
+
+              {footerNav.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+
+              <Link href="/order">سفارش پروژه</Link>
+            </nav>
+
+            {contactEmail && (
+              <div className="footer-contact">
+                <span className="footer-nav-label">CONTACT</span>
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className="footer-email"
+                  dir="ltr"
+                >
+                  {contactEmail}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Bottom bar ── */}
+        <div className="footer-bottom">
+          <span className="footer-bottom-item">
+            © {year} — تمامی حقوق محفوظ است.
+          </span>
+
+          <span className="footer-bottom-center">
+            DESIGN · DEVELOPMENT · AI
+          </span>
+
+          <a href="#home" className="footer-back-top">
+            بازگشت به بالا ↑
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function SignatureMark() {
+  return (
+    <svg
+      viewBox="0 0 220 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M6 34C24 14 46 40 70 22C88 8 106 34 130 22C150 12 172 30 206 18"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <circle cx="212" cy="16" r="2.2" fill="currentColor" />
+    </svg>
+  );
+}

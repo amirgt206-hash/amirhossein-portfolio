@@ -1,0 +1,130 @@
+/* ============================================================
+   Design Tokens — Liquid Signature
+   ------------------------------------------------------------
+   Light:   warm paper + deep ink + coral accent + glass layers
+   Dark:    deep charcoal + warm glow + translucent surfaces
+   ============================================================ */
+
+:root {
+  /* ── Surface ── */
+  --paper:        #f7f3ee;
+  --paper-2:      #efe9e0;
+  --surface:      #fff9f4;
+  --surface-2:    #fbf4ec;
+
+  /* ── Ink ── */
+  --ink:          #0a0908;
+  --ink-2:        #3f3a34;
+  --ink-3:        #716b64;
+  --ink-muted:    #a29a90;
+
+  /* ── Accent ── */
+  --accent:        #e94b2c;
+  --accent-2:      #ff7a45;
+  --accent-soft:   #ffb38a;
+  --accent-tint:   rgba(233, 75, 44, 0.08);
+  --accent-glow:   rgba(233, 75, 44, 0.24);
+
+  /* ── Lines ── */
+  --line:          rgba(10, 9, 8, 0.08);
+  --line-soft:     rgba(10, 9, 8, 0.04);
+  --line-strong:   rgba(10, 9, 8, 0.18);
+
+  /* ── Glass (Light) ── */
+  --glass-soft:    rgba(255, 249, 244, 0.55);
+  --glass:         rgba(255, 249, 244, 0.65);
+  --glass-strong:  rgba(255, 249, 244, 0.78);
+  --glass-border:  rgba(10, 9, 8, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.7);
+
+  /* ── Feedback ── */
+  --success:       #0f766e;
+  --danger:        #b42318;
+
+  /* ── Shadow ── */
+  --shadow-sm: 0 1px 2px rgba(10, 9, 8, 0.04);
+  --shadow-md: 0 8px 24px -12px rgba(10, 9, 8, 0.14);
+  --shadow-lg: 0 24px 64px -24px rgba(10, 9, 8, 0.22);
+  --shadow-xl: 0 40px 100px -32px rgba(10, 9, 8, 0.28);
+  --shadow-accent: 0 12px 40px -12px var(--accent-glow);
+
+  /* ── Radius ── */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+
+  /* ── Spacing ── */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-7: 32px;  --space-8: 40px;
+  --space-9: 48px;  --space-10: 64px; --space-11: 80px; --space-12: 120px;
+
+  /* ── Type scale ── */
+  --fs-display: clamp(52px, 8.5vw, 128px);
+  --fs-h1:      clamp(36px, 5.5vw, 72px);
+  --fs-h2:      clamp(28px, 3.8vw, 52px);
+  --fs-h3:      clamp(20px, 2vw, 28px);
+  --fs-body:    clamp(15px, 1.1vw, 17px);
+  --fs-small:   14px;
+  --fs-micro:   12px;
+  --fs-mono:    10.5px;
+
+  /* ── Motion ── */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --duration-fast:   160ms;
+  --duration-normal: 320ms;
+  --duration-slow:   640ms;
+
+  /* ── Layout ── */
+  --container: 1280px;
+  --reading:   720px;
+
+  /* ── Focus ── */
+  --focus-ring: 2px;
+  --focus-offset: 3px;
+
+  /* ── Fonts ── */
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo,
+    Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  --paper:        #0a0908;
+  --paper-2:      #11100e;
+  --surface:      #14120f;
+  --surface-2:    #1a1815;
+
+  --ink:          #f5efe6;
+  --ink-2:        #c9c2b8;
+  --ink-3:        #8a837a;
+  --ink-muted:    #5f5a52;
+
+  --accent:        #ff6a3d;
+  --accent-2:      #ff8a5c;
+  --accent-soft:   #ffb38a;
+  --accent-tint:   rgba(255, 106, 61, 0.12);
+  --accent-glow:   rgba(255, 106, 61, 0.32);
+
+  --line:          rgba(245, 239, 230, 0.08);
+  --line-soft:     rgba(245, 239, 230, 0.04);
+  --line-strong:   rgba(245, 239, 230, 0.18);
+
+  --glass-soft:    rgba(26, 24, 21, 0.55);
+  --glass:         rgba(26, 24, 21, 0.65);
+  --glass-strong:  rgba(20, 18, 15, 0.78);
+  --glass-border:  rgba(245, 239, 230, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+
+  --success:       #34d399;
+  --danger:        #f87171;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 24px 64px -24px rgba(0, 0, 0, 0.8);
+  --shadow-xl: 0 40px 100px -32px rgba(0, 0, 0, 0.9);
+  --shadow-accent: 0 12px 40px -12px var(--accent-glow);
+}
