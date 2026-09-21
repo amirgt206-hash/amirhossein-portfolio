@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import emailjs from "@emailjs/browser";
 
 const projectTypes = [
   { value: "web-custom", label: "طراحی و توسعه وب‌سایت اختصاصی" },
@@ -44,10 +43,6 @@ const initialForm: FormState = {
   contactPreference: "sms",
   website: "",
 };
-
-const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
 export default function OrderForm() {
   const [form, setForm] = useState<FormState>(initialForm);
@@ -95,7 +90,7 @@ export default function OrderForm() {
       return;
     }
 
-    /* Validation */
+    /* Validation سمت کلاینت (برای UX سریع‌تر) */
     if (!form.firstName.trim()) {
       setErrorMessage("لطفاً نام خود را وارد کنید.");
       return;
@@ -123,56 +118,55 @@ export default function OrderForm() {
       return;
     }
 
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      setStatus("error");
-      setErrorMessage(
-        "تنظیمات ارسال ایمیل کامل نیست. لطفاً تنظیمات EmailJS را بررسی کنید."
-      );
-      return;
-    }
-
     setStatus("sending");
 
     try {
-      const selectedProjectTypes = form.projectTypes
-        .map((value) => {
-          const projectType = projectTypes.find(
-            (type) => type.value === value
-          );
-          return projectType?.label || value;
-        })
-        .join("، ");
-
-      const selectedContactMethod =
-        contactMethods.find(
-          (method) => method.value === form.contactPreference
-        )?.label || form.contactPreference;
-
-      const templateParams = {
-        first_name: form.firstName.trim(),
-        last_name: form.lastName.trim() || "وارد نشده",
-        phone: form.phone.trim(),
-        email: form.email.trim() || "وارد نشده",
-        business_name: form.personalProject
-          ? "پروژه شخصی"
-          : form.businessName.trim(),
-        personal_project: form.personalProject ? "بله" : "خیر",
-        project_types: selectedProjectTypes,
-        description: form.description.trim(),
-        contact_preference: selectedContactMethod,
-      };
-
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-        publicKey: PUBLIC_KEY,
+      /* ارسال به API Route داخلی */
+      const response = await fetch("/api/project-request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          businessName: form.businessName.trim(),
+          personalProject: form.personalProject,
+          projectTypes: form.projectTypes,
+          description: form.description.trim(),
+          contactPreference: form.contactPreference,
+          website: form.website, // honeypot
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        /* اگه rate-limit بود، پیام مخصوصش رو نشون بده */
+        if (response.status === 429) {
+          setErrorMessage(
+            data.message ||
+              "تعداد درخواست‌ها زیاد است. لطفاً چند دقیقه دیگر تلاش کنید."
+          );
+        } else {
+          setErrorMessage(
+            data.message ||
+              "ارسال درخواست انجام نشد. لطفاً چند لحظه بعد دوباره تلاش کنید."
+          );
+        }
+        setStatus("error");
+        return;
+      }
 
       setStatus("success");
       setForm(initialForm);
     } catch (error) {
-      console.error("EmailJS error:", error);
+      console.error("Order form error:", error);
       setStatus("error");
       setErrorMessage(
-        "ارسال درخواست انجام نشد. لطفاً چند لحظه بعد دوباره تلاش کنید."
+        "ارسال درخواست انجام نشد. لطفاً اتصال اینترنت خود را بررسی کنید."
       );
     }
   };
