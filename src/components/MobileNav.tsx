@@ -8,6 +8,7 @@ type Item = {
   section: string;
   label: string;
   icon: React.ReactNode;
+  isPage?: boolean;
 };
 
 const ITEMS: Item[] = [
@@ -89,6 +90,28 @@ const ITEMS: Item[] = [
       </svg>
     ),
   },
+  {
+    href: "/blog",
+    section: "blog",
+    label: "بلاگ",
+    isPage: true,
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M4 19.5V6a2 2 0 0 1 2-2h9l5 5v10.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+        <path d="M14 4v5h5" />
+        <path d="M8 13h8" />
+        <path d="M8 17h5" />
+      </svg>
+    ),
+  },
 ];
 
 export default function MobileNav() {
@@ -98,7 +121,8 @@ export default function MobileNav() {
   /* ── Active section tracking ── */
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
-    const sections = ITEMS
+
+    const sections = ITEMS.filter((i) => !i.isPage)
       .map((i) => document.getElementById(i.section))
       .filter((el): el is HTMLElement => el !== null);
 
@@ -140,12 +164,25 @@ export default function MobileNav() {
     >
       <ul className="mobile-nav-list">
         {ITEMS.map((item) => {
-          const isActive = active === item.section;
+          const isActive = !item.isPage && active === item.section;
+          const className = `mobile-nav-item${isActive ? " is-active" : ""}`;
+
+          if (item.isPage) {
+            return (
+              <li key={item.section}>
+                <Link href={item.href} className={className}>
+                  <span className="mobile-nav-icon">{item.icon}</span>
+                  <span className="mobile-nav-label">{item.label}</span>
+                </Link>
+              </li>
+            );
+          }
+
           return (
             <li key={item.section}>
               <a
                 href={item.href}
-                className={`mobile-nav-item${isActive ? " is-active" : ""}`}
+                className={className}
                 aria-current={isActive ? "true" : undefined}
               >
                 <span className="mobile-nav-icon">{item.icon}</span>

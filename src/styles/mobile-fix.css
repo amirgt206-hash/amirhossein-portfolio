@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    MOBILE FIX + GLASS DOCK NAV
-   Version: 2.0 — Custom Glassmorphism Design
+   Version: 2.1 — Optimized for 6 items (5 nav + 1 CTA)
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── 1. Prevent horizontal scroll ── */
@@ -43,7 +43,8 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   🎨 GLASS DOCK — Floating premium bottom nav
+   GLASS DOCK — Floating premium bottom nav
+   Optimized for 5 nav items + 1 CTA
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 720px) {
   /* ── Wrapper: floating glass dock ── */
@@ -55,7 +56,7 @@
     right: 12px !important;
     inset: auto 12px 12px 12px !important;
     width: auto !important;
-    max-width: 480px !important;
+    max-width: 520px !important;
     margin: 0 auto !important;
     padding: 6px !important;
     direction: rtl !important;
@@ -147,7 +148,7 @@
     height: 62px !important;
     padding: 0 !important;
     margin: 0 !important;
-    gap: 2px !important;
+    gap: 1px !important;
     list-style: none !important;
     direction: rtl !important;
     box-sizing: border-box !important;
@@ -177,13 +178,13 @@
     justify-content: center !important;
     width: 100% !important;
     height: 100% !important;
-    padding: 0.35rem 0.15rem !important;
+    padding: 0.3rem 0.08rem !important;
     margin: 0 !important;
-    gap: 3px !important;
+    gap: 2px !important;
     text-decoration: none !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
-    border-radius: 20px !important;
+    border-radius: 18px !important;
     transform: none !important;
     color: #716b64 !important;
     transition:
@@ -222,15 +223,15 @@
       0 4px 14px rgba(233, 75, 44, 0.25) !important;
   }
 
-  /* ── Active indicator dot above label ── */
+  /* ── Active indicator line above label ── */
   .mobile-nav-item.is-active::before,
   .mobile-nav-item.active::before {
     content: "" !important;
     position: absolute !important;
-    top: 4px !important;
+    top: 3px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 18px !important;
+    width: 14px !important;
     height: 2px !important;
     border-radius: 2px !important;
     background: linear-gradient(
@@ -254,7 +255,7 @@
      ═══════════════════════════════════════════════════════ */
   .mobile-nav-label {
     display: block !important;
-    font-size: 0.6rem !important;
+    font-size: 0.55rem !important;
     font-weight: 500 !important;
     line-height: 1 !important;
     letter-spacing: 0.01em !important;
@@ -275,8 +276,8 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 22px !important;
-    height: 22px !important;
+    width: 20px !important;
+    height: 20px !important;
     flex-shrink: 0 !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -431,7 +432,46 @@
   }
 }
 
-/* ── 7. Reduced motion ── */
+/* ── 7. Small mobile (max-width: 380px) ── */
+@media (max-width: 380px) {
+  .mobile-nav {
+    inset: auto 8px 8px 8px !important;
+    border-radius: 22px !important;
+    padding: 5px !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-nav-list {
+    height: 56px !important;
+    gap: 0 !important;
+  }
+
+  .mobile-nav-item,
+  .mobile-nav-cta {
+    padding: 0.25rem 0.05rem !important;
+    gap: 1px !important;
+    border-radius: 16px !important;
+  }
+
+  .mobile-nav-icon,
+  .mobile-nav-cta-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .mobile-nav-label {
+    font-size: 0.5rem !important;
+  }
+
+  .mobile-nav-item.is-active::before,
+  .mobile-nav-item.active::before {
+    width: 10px !important;
+    height: 1.5px !important;
+    top: 2px !important;
+  }
+}
+
+/* ── 8. Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .mobile-nav-cta::after {
     animation: none !important;

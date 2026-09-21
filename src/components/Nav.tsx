@@ -9,6 +9,7 @@ const navItems = [
   { label: "خدمات", href: "#services" },
   { label: "نمونه‌کارها", href: "#portfolio" },
   { label: "درباره من", href: "#about" },
+  { label: "بلاگ", href: "/blog" },
 ];
 
 export default function Nav() {
@@ -44,6 +45,7 @@ export default function Nav() {
     if (typeof IntersectionObserver === "undefined") return;
 
     const sections = navItems
+      .filter((item) => item.href.startsWith("#"))
       .map((item) => document.querySelector(item.href))
       .filter((el): el is Element => el !== null);
 
@@ -69,19 +71,20 @@ export default function Nav() {
     return () => observer.disconnect();
   }, []);
 
+  const sectionItems = navItems.filter((item) => item.href.startsWith("#"));
   const activeIndex = Math.max(
     0,
-    navItems.findIndex((item) => item.href.slice(1) === activeSection)
+    sectionItems.findIndex((item) => item.href.slice(1) === activeSection)
   );
   const activeNumber = String(activeIndex + 1).padStart(2, "0");
-  const totalNumber = String(navItems.length).padStart(2, "0");
+  const totalNumber = String(sectionItems.length).padStart(2, "0");
 
   return (
     <header className={`site-nav ${scrolled ? "is-scrolled" : ""}`}>
       <div className="container">
         <div className="nav-inner">
           {/* ── Brand ── */}
-          <Link
+          <a
             href="#home"
             className="brand"
             aria-label="امیرحسین شرکائی — Amirhossein Sherkaei"
@@ -94,12 +97,11 @@ export default function Nav() {
               <small>Amirhossein Sherkaei</small>
             </span>
 
-            {/* Editorial issue number */}
             <span className="brand-issue" aria-hidden="true">
               <span className="brand-issue-sep">/</span>
               <span className="brand-issue-num">Nº 01</span>
             </span>
-          </Link>
+          </a>
 
           {/* ── Desktop nav ── */}
           <nav className="desktop-nav" aria-label="منوی اصلی">
@@ -109,31 +111,46 @@ export default function Nav() {
 
             <div className="desktop-nav-list">
               {navItems.map((item) => {
-                const sectionId = item.href.slice(1);
-                const isActive = activeSection === sectionId;
+                const isHash = item.href.startsWith("#");
+                const sectionId = isHash ? item.href.slice(1) : "";
+                const isActive = isHash && activeSection === sectionId;
+                const className = isActive ? "active" : "";
+
+                if (isHash) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className={className}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
+
                 return (
-                  <a
+                  <Link
                     key={item.href}
                     href={item.href}
-                    className={isActive ? "active" : ""}
+                    className={className}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 );
               })}
 
-              {/* Moving dot indicator */}
               <span
                 className="desktop-nav-indicator"
-                style={{
-                  "--nav-index": activeIndex,
-                  "--nav-total": navItems.length,
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--nav-index": activeIndex,
+                    "--nav-total": sectionItems.length,
+                  } as React.CSSProperties
+                }
                 aria-hidden="true"
               />
             </div>
 
-            {/* Section counter */}
             <span className="desktop-nav-counter" aria-hidden="true">
               <span className="desktop-nav-counter-current">
                 {activeNumber}
