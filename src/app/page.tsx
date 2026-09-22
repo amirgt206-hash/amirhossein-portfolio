@@ -6,6 +6,7 @@ import Services from "@/components/Services";
 import About from "@/components/About";
 import WhyMe from "@/components/WhyMe";
 import LatestBlogPosts from "@/components/LatestBlogPosts";
+import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
@@ -44,6 +45,7 @@ export default function Home() {
         <About />
         <WhyMe />
         <LatestBlogPosts />
+        <FAQ />
         <FinalCTA />
       </main>
 
