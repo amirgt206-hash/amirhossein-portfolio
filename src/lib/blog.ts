@@ -151,3 +151,8 @@ function formatDate(dateStr: string): string {
     return dateStr;
   }
 }
+/* ─── Get latest N posts (for homepage) ─── */
+export function getLatestPosts(limit: number = 3): BlogPost[] {
+  const allPosts = getAllPosts();
+  return allPosts.slice(0, limit);
+}

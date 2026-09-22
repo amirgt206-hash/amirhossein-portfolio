@@ -1,10 +1,12 @@
 import Link from "next/link";
 
 const footerNav = [
-  { label: "خانه", href: "#home" },
-  { label: "خدمات", href: "#services" },
-  { label: "نمونه‌کارها", href: "#portfolio" },
-  { label: "درباره من", href: "#about" },
+  { label: "خانه", href: "/" },
+  { label: "خدمات", href: "/#services" },
+  { label: "نمونه‌کارها", href: "/#portfolio" },
+  { label: "بلاگ", href: "/blog" },
+  { label: "درباره من", href: "/#about" },
+  { label: "سفارش پروژه", href: "/order" },
 ];
 
 export default function Footer() {
@@ -14,7 +16,7 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
-        {/* ── CTA Block: Let's build ── */}
+        {/* ── CTA Block ── */}
         <div className="footer-cta">
           <span className="section-index" style={{ marginBottom: 0 }}>
             NEXT — STEP
@@ -38,9 +40,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ── Main footer content ── */}
+        {/* ── Main footer ── */}
         <div className="footer-main">
-          {/* ── Brand column ── */}
           <div className="footer-brand-block">
             <div className="footer-brand">
               <span className="footer-mark" aria-hidden="true">
@@ -63,7 +64,6 @@ export default function Footer() {
             </span>
           </div>
 
-          {/* ── Navigation + contact column ── */}
           <div className="footer-nav-block">
             <nav className="footer-nav" aria-label="ناوبری پایین صفحه">
               <span className="footer-nav-label">PAGES</span>
@@ -73,8 +73,6 @@ export default function Footer() {
                   {item.label}
                 </Link>
               ))}
-
-              <Link href="/order">سفارش پروژه</Link>
             </nav>
 
             {contactEmail && (
@@ -119,6 +117,7 @@ function SignatureMark() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       focusable="false"
+      suppressHydrationWarning
     >
       <path
         d="M6 34C24 14 46 40 70 22C88 8 106 34 130 22C150 12 172 30 206 18"

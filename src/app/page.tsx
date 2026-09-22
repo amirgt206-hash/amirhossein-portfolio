@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import About from "@/components/About";
 import WhyMe from "@/components/WhyMe";
+import LatestBlogPosts from "@/components/LatestBlogPosts";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
@@ -42,6 +43,7 @@ export default function Home() {
         <Portfolio />
         <About />
         <WhyMe />
+        <LatestBlogPosts />
         <FinalCTA />
       </main>
 

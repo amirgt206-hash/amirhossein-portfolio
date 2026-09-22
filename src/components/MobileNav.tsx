@@ -72,25 +72,6 @@ const ITEMS: Item[] = [
     ),
   },
   {
-    href: "#about",
-    section: "about",
-    label: "درباره",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1" />
-      </svg>
-    ),
-  },
-  {
     href: "/blog",
     section: "blog",
     label: "بلاگ",
@@ -112,14 +93,40 @@ const ITEMS: Item[] = [
       </svg>
     ),
   },
+  {
+    href: "#about",
+    section: "about",
+    label: "درباره",
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        suppressHydrationWarning
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1" />
+      </svg>
+    ),
+  },
 ];
 
 export default function MobileNav() {
   const [active, setActive] = useState<string>("home");
   const [hidden, setHidden] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   /* ── Active section tracking ── */
   useEffect(() => {
+    if (!mounted) return;
     if (typeof IntersectionObserver === "undefined") return;
 
     const sections = ITEMS.filter((i) => !i.isPage)
@@ -140,10 +147,11 @@ export default function MobileNav() {
 
     sections.forEach((s) => io.observe(s));
     return () => io.disconnect();
-  }, []);
+  }, [mounted]);
 
   /* ── Hide when footer is visible ── */
   useEffect(() => {
+    if (!mounted) return;
     if (typeof IntersectionObserver === "undefined") return;
     const footer = document.querySelector(".site-footer");
     if (!footer) return;
@@ -155,12 +163,13 @@ export default function MobileNav() {
 
     io.observe(footer);
     return () => io.disconnect();
-  }, []);
+  }, [mounted]);
 
   return (
     <nav
       className={`mobile-nav${hidden ? " is-hidden" : ""}`}
       aria-label="ناوبری موبایل"
+      suppressHydrationWarning
     >
       <ul className="mobile-nav-list">
         {ITEMS.map((item) => {
