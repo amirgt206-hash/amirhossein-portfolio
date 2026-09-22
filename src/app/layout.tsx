@@ -35,6 +35,8 @@ import "@/styles/mobile-fix.css";
 
 /* 10. Blog styles */
 import "@/app/blog/blog.css";
+/* 11. Theme toggle — legendary sky edition (overrides everything above) */
+import "@/styles/theme-toggle.css";
 
 /* 11. globals.css is now disabled — all styles migrated to modular files */
 // import "./globals.css";
