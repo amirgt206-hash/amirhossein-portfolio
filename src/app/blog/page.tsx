@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts, getAllTags } from "@/lib/blog";
+import { getBlogIndexSchema } from "@/lib/schema";
 import BlogList from "@/components/BlogList";
 import "./blog.css";
 
@@ -8,14 +9,32 @@ export const metadata: Metadata = {
   title: "بلاگ",
   description:
     "مقالات امیرحسین شرکائی درباره طراحی وب، توسعه فرانت‌اند، UI/UX و هوش مصنوعی.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export default function BlogPage() {
   const posts = getAllPosts();
   const tags = getAllTags();
 
+  const blogSchema = getBlogIndexSchema(
+    posts.map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      date: p.date,
+    }))
+  );
+
   return (
     <main id="main" className="blog-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogSchema),
+        }}
+      />
+
       <div className="container">
         <Link href="/" className="blog-back-home">
           <span aria-hidden="true">→</span>

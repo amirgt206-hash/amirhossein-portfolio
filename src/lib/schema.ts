@@ -17,7 +17,7 @@ export const personSchema = {
   name: "امیرحسین شرکائی",
   alternateName: "Amirhossein Sherkaei",
   url: SITE_URL,
-  image: `${SITE_URL}/icon.png`,
+  image: `${SITE_URL}/icon.webp`,
   jobTitle: "Frontend Developer & UI/UX Designer",
   description:
     "طراح و توسعه‌دهنده وب با تخصص در ساخت وب‌سایت‌های اختصاصی و خلاقیت دیجیتال با کمک هوش مصنوعی.",
@@ -55,7 +55,7 @@ export const serviceSchema = {
   "@type": "ProfessionalService",
   name: "Amirhossein Sherkaei",
   url: SITE_URL,
-  image: `${SITE_URL}/icon.png`,
+  image: `${SITE_URL}/icon.webp`,
   description:
     "طراحی و توسعه وب‌سایت‌های اختصاصی، رابط کاربری، تجربه کاربری و خلاقیت دیجیتال.",
   areaServed: "Iran",
@@ -99,6 +99,80 @@ export function getProjectSchemas() {
     keywords: project.tags.join(", "),
     genre: project.category,
   }));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. BLOG POST
+   ───────────────────────────────────────────────────────────── */
+export function getBlogPostSchema(post: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  tags: string[];
+  category: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/blog/${post.slug}`,
+    },
+    headline: post.title,
+    description: post.excerpt,
+    image: `${SITE_URL}/icon.webp`,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Person",
+      name: "امیرحسین شرکائی",
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Person",
+      name: "امیرحسین شرکائی",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/icon.webp`,
+      },
+    },
+    keywords: post.tags.join(", "),
+    articleSection: post.category,
+    inLanguage: "fa-IR",
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. BLOG (Index Page)
+   ───────────────────────────────────────────────────────────── */
+export function getBlogIndexSchema(
+  posts: Array<{
+    slug: string;
+    title: string;
+    date: string;
+  }>
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "بلاگ امیرحسین شرکائی",
+    description:
+      "مقالات درباره‌ی طراحی وب، افزایش فروش، سئو و تجربه‌ی کاربری",
+    url: `${SITE_URL}/blog`,
+    inLanguage: "fa-IR",
+    author: {
+      "@type": "Person",
+      name: "امیرحسین شرکائی",
+      url: SITE_URL,
+    },
+    blogPost: posts.slice(0, 10).map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      datePublished: post.date,
+    })),
+  };
 }
 
 /* ─────────────────────────────────────────────────────────────
