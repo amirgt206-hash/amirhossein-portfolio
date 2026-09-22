@@ -1,8 +1,44 @@
 import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
-import "./globals.css";
+
+/* ═══════════════════════════════════════════════════════════
+   CSS — Order matters! Tokens → Base → Layout → Pages → Enhancements
+   ⚠️ globals.css is disabled — all styles are now in modular files
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Design tokens (CSS variables) */
 import "@/styles/tokens.css";
+
+/* 2. Base — reset, layout, typography, buttons, forms, utilities */
+import "@/styles/base.css";
+
+/* 3. Layout — nav, hero, services, portfolio */
+import "@/styles/layout.css";
+
+/* 4. Layout more — project viewer, about, why, final CTA */
+import "@/styles/layout-more.css";
+
+/* 5. Footer effects — footer, back-to-top, reveal, animations */
+import "@/styles/footer-effects.css";
+
+/* 6. Pages — order, form, success, 404 */
+import "@/styles/pages.css";
+
+/* 7. Responsive — media queries, reduced motion, print */
+import "@/styles/responsive.css";
+
+/* 8. Enhancements — all batches, overrides, editorial, FAQ, etc. */
+import "@/styles/enhancements.css";
+
+/* 9. Mobile fix — glass dock mobile nav */
 import "@/styles/mobile-fix.css";
+
+/* 10. Blog styles */
+import "@/app/blog/blog.css";
+
+/* 11. globals.css is now disabled — all styles migrated to modular files */
+// import "./globals.css";
+
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
