@@ -21,9 +21,8 @@
     "@vercel/speed-insights": "^2.0.0",
     "gray-matter": "^4.0.3",
     "marked": "^18.0.13",
-    "next": "14.2.5",
+    "next": "^14.2.35",
     "next-mdx-remote": "^6.0.0",
-    "nodemailer": "^6.9.14",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rehype-pretty-code": "^0.14.5",
@@ -31,7 +30,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
-    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.1",
