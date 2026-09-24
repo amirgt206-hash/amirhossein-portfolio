@@ -11,13 +11,36 @@ export const size = {
 
 export const contentType = "image/png";
 
-/*
- * Load Vazirmatn from a public CDN. We use fetch instead of fs
- * because this route runs on the Edge runtime, which has no filesystem.
- *
- * If the fetch fails (offline build, CDN hiccup), we fall back to a
- * Latin-only design so the OG image is never broken.
- */
+/* ─────────────────────────────────────────────────────────────
+   Persian year (auto-computed from system date)
+   ───────────────────────────────────────────────────────────── */
+function getPersianYear(locale: "fa" | "en" = "fa"): string {
+  const persianDigits = new Intl.DateTimeFormat("fa-IR", {
+    year: "numeric",
+  }).format(new Date());
+
+  const digits = persianDigits.replace(/[^\u06F0-\u06F9]/g, "");
+
+  if (locale === "fa") return digits;
+
+  const latinMap: Record<string, string> = {
+    "۰": "0",
+    "۱": "1",
+    "۲": "2",
+    "۳": "3",
+    "۴": "4",
+    "۵": "5",
+    "۶": "6",
+    "۷": "7",
+    "۸": "8",
+    "۹": "9",
+  };
+  return digits.replace(/[۰-۹]/g, (d) => latinMap[d] || d);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Load Vazirmatn from CDN
+   ───────────────────────────────────────────────────────────── */
 async function loadFont(): Promise<ArrayBuffer | null> {
   const urls = [
     "https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/ttf/Vazirmatn-Bold.ttf",
@@ -29,7 +52,7 @@ async function loadFont(): Promise<ArrayBuffer | null> {
       const res = await fetch(url, { cache: "force-cache" });
       if (res.ok) return await res.arrayBuffer();
     } catch {
-      /* try the next URL */
+      /* try next */
     }
   }
 
@@ -38,8 +61,12 @@ async function loadFont(): Promise<ArrayBuffer | null> {
 
 export default async function OpengraphImage() {
   const fontData = await loadFont();
+  const yearFa = getPersianYear("fa");
+  const yearEn = getPersianYear("en");
 
-  /* ── Fallback: no font available (Latin-only) ── */
+  /* ═══════════════════════════════════════════════════════════
+     Fallback: no font available (Latin-only)
+     ═══════════════════════════════════════════════════════════ */
   if (!fontData) {
     return new ImageResponse(
       (
@@ -62,7 +89,7 @@ export default async function OpengraphImage() {
               justifyContent: "space-between",
               fontSize: 22,
               letterSpacing: 3,
-              color: "#716b64",
+              color: "#5a5550",
             }}
           >
             <span>AMIRHOSSEIN SHERKAEI</span>
@@ -74,7 +101,7 @@ export default async function OpengraphImage() {
               style={{
                 display: "flex",
                 fontSize: 26,
-                color: "#716b64",
+                color: "#5a5550",
                 letterSpacing: 3,
               }}
             >
@@ -87,7 +114,7 @@ export default async function OpengraphImage() {
                 fontSize: 96,
                 lineHeight: 1.02,
                 fontWeight: 800,
-                letterSpacing: "-0.04em",
+                letterSpacing: "-0.02em",
               }}
             >
               Amirhossein Sherkaei
@@ -112,11 +139,11 @@ export default async function OpengraphImage() {
               borderTop: "1px solid #d6cec0",
               paddingTop: 24,
               fontSize: 20,
-              color: "#716b64",
+              color: "#5a5550",
               letterSpacing: 3,
             }}
           >
-            <span>PORTFOLIO / 1404</span>
+            <span>PORTFOLIO / {yearEn}</span>
             <span>DESIGN · DEVELOPMENT · AI</span>
           </div>
         </div>
@@ -125,7 +152,9 @@ export default async function OpengraphImage() {
     );
   }
 
-  /* ── Full Persian design (requires Vazirmatn) ── */
+  /* ═══════════════════════════════════════════════════════════
+     Full Persian design (requires Vazirmatn)
+     ═══════════════════════════════════════════════════════════ */
   return new ImageResponse(
     (
       <div
@@ -161,7 +190,7 @@ export default async function OpengraphImage() {
             justifyContent: "space-between",
             fontSize: 22,
             letterSpacing: 3,
-            color: "#716b64",
+            color: "#5a5550",
             position: "relative",
           }}
         >
@@ -181,7 +210,7 @@ export default async function OpengraphImage() {
             style={{
               display: "flex",
               fontSize: 26,
-              color: "#716b64",
+              color: "#5a5550",
               letterSpacing: 1,
             }}
           >
@@ -195,7 +224,7 @@ export default async function OpengraphImage() {
               fontSize: 88,
               lineHeight: 1.05,
               fontWeight: 700,
-              letterSpacing: "-0.035em",
+              letterSpacing: "-0.02em",
             }}
           >
             <span>امیرحسین شرکائی</span>
@@ -213,12 +242,12 @@ export default async function OpengraphImage() {
             borderTop: "1px solid #d6cec0",
             paddingTop: 24,
             fontSize: 20,
-            color: "#716b64",
+            color: "#5a5550",
             letterSpacing: 2,
             position: "relative",
           }}
         >
-          <span>PORTFOLIO / ۱۴۰۴</span>
+          <span>PORTFOLIO / {yearFa}</span>
           <span>DESIGN · DEVELOPMENT · AI</span>
         </div>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Project } from "@/content/projects";
 
 type ProjectViewerProps = {
@@ -24,12 +26,31 @@ export default function ProjectViewer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const [shareLabel, setShareLabel] = useState("اشتراک‌گذاری");
+  const [mounted, setMounted] = useState(false);
 
+  /* ── فقط بعد از mount روی کلاینت رندر می‌شود (createPortal نیاز به DOM دارد) ── */
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  /* ── Body scroll lock + focus trap + keyboard navigation ── */
+  useEffect(() => {
+    if (!mounted) return;
+
     lastFocusedRef.current = document.activeElement as HTMLElement | null;
 
-    const previousOverflow = document.body.style.overflow;
+    /* iOS-safe scroll lock */
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevBodyPaddingRight = document.body.style.paddingRight;
+
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
     const focusTimer = window.setTimeout(() => {
       closeButtonRef.current?.focus();
@@ -80,11 +101,13 @@ export default function ProjectViewer({
 
     return () => {
       window.clearTimeout(focusTimer);
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.paddingRight = prevBodyPaddingRight;
       document.removeEventListener("keydown", handleKeyDown);
       lastFocusedRef.current?.focus();
     };
-  }, [onClose, onNext, onPrev]);
+  }, [mounted, onClose, onNext, onPrev]);
 
   useEffect(() => {
     setShareLabel("اشتراک‌گذاری");
@@ -111,7 +134,9 @@ export default function ProjectViewer({
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  const modalContent = (
     <div
       className="project-modal"
       role="presentation"
@@ -126,7 +151,7 @@ export default function ProjectViewer({
         aria-modal="true"
         aria-labelledby="project-modal-title"
       >
-        {/* ═══════ Navigation bar (بالای modal) ═══════ */}
+        {/* ═══════ Navigation bar ═══════ */}
         <div className="project-modal-nav">
           <div className="project-modal-nav-left">
             <span className="project-modal-nav-counter">
@@ -188,12 +213,12 @@ export default function ProjectViewer({
         <div className="project-modal-main">
           <div className="project-modal-visual">
             {project.coverImage ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
+              <Image
                 src={project.coverImage}
                 alt={`نمونه‌کار ${project.title}`}
-                loading="eager"
-                decoding="async"
+                fill
+                sizes="(max-width: 900px) 100vw, 560px"
+                style={{ objectFit: "cover" }}
               />
             ) : (
               <>
@@ -336,7 +361,13 @@ export default function ProjectViewer({
               </div>
               <div>
                 <span>سال</span>
-                <strong>{project.year ?? "۱۴۰۴"}</strong>
+                <strong>
+  {project.year ??
+    new Intl.DateTimeFormat("fa-IR", { year: "numeric" })
+      .format(new Date())
+      .replace(/[^\u06F0-\u06F9]/g, "")
+      .slice(0, 4)}
+</strong>
               </div>
               <div>
                 <span>نقش</span>
@@ -344,7 +375,6 @@ export default function ProjectViewer({
               </div>
             </div>
 
-            {/* ── Actions (پایین modal) ── */}
             <div className="project-modal-actions">
               <a href="/order" className="button button-primary">
                 پروژه‌ای مشابه می‌خواهم
@@ -365,6 +395,8 @@ export default function ProjectViewer({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
 
 function ShareIcon() {

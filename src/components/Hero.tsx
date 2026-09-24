@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const ROLES = ["طراح وب", "توسعه‌دهنده فرانت‌اند", "خلاق دیجیتال"];
+const ROLES = ["طراح وب", "توسعه‌دهنده فرانت‌اند", "خلاق دیجیتال با AI"];
 const ROTATION_MS = 3400;
 
-const TECH_STACK = ["HTML", "CSS", "JavaScript", "AI", "WordPress"];
+const TECH_STACK = ["HTML", "CSS", "JavaScript", "Next.js", "AI"];
 
 const MARQUEE_WORDS = [
   "WEB DESIGN",
@@ -18,6 +18,14 @@ const MARQUEE_WORDS = [
   "INTERFACE",
   "STORYTELLING",
 ];
+
+/* سال شمسی جاری — خودکار از تاریخ سیستم محاسبه می‌شود */
+const CURRENT_PERSIAN_YEAR = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+})
+  .format(new Date())
+  .replace(/[^\u06F0-\u06F9]/g, "")
+  .slice(0, 4);
 
 export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
@@ -48,7 +56,7 @@ export default function Hero() {
       <div className="hero-rail" aria-hidden="true">
         <span className="hero-rail-line" />
         <span className="hero-rail-text">
-          AMIRHOSSEIN&nbsp;·&nbsp;SHERKAEI&nbsp;·&nbsp;۱۴۰۴
+          AMIRHOSSEIN&nbsp;·&nbsp;SHERKAEI&nbsp;·&nbsp;{CURRENT_PERSIAN_YEAR}
         </span>
         <span className="hero-rail-line" />
       </div>
@@ -57,7 +65,7 @@ export default function Hero() {
         {/* ═══════ EDITORIAL MASTHEAD ═══════ */}
         <div className="hero-masthead">
           <span className="hero-masthead-left">
-            VOL.&nbsp;01&nbsp;—&nbsp;ISSUE&nbsp;۱۴۰۴
+            VOL.&nbsp;01&nbsp;—&nbsp;ISSUE&nbsp;{CURRENT_PERSIAN_YEAR}
           </span>
           <span className="hero-masthead-center" aria-hidden="true">
             ✦
@@ -69,12 +77,12 @@ export default function Hero() {
 
         <div className="hero-top">
           <span className="eyebrow">
-            طراحی وب · توسعه فرانت‌اند · تولید با AI
+            طراحی وب · فرانت‌اند · خلاقیت با AI
           </span>
 
           <span className="hero-top-meta">
             <span className="hero-top-meta-dot" aria-hidden="true" />
-            <span>OPEN · ۱۴۰۴</span>
+            <span>پذیرش پروژه · {CURRENT_PERSIAN_YEAR}</span>
           </span>
         </div>
 
@@ -88,17 +96,24 @@ export default function Hero() {
           </span>
         </h1>
 
-        <p className="hero-role" aria-live="polite" aria-atomic="true">
+        <p className="hero-role">
           <span className="hero-role-dot" aria-hidden="true" />
-          <span key={roleIndex} className="hero-role-text">
+          <span
+            key={roleIndex}
+            className="hero-role-text"
+            aria-hidden="true"
+          >
             {ROLES[roleIndex]}
+          </span>
+          <span className="sr-only">
+            طراح وب، توسعه‌دهنده فرانت‌اند و خلاق دیجیتال با هوش مصنوعی
           </span>
         </p>
 
         <p className="hero-description">
-          وب‌سایت‌های اختصاصی می‌سازم — با کدی که از صفر نوشته می‌شه و
-          نگاهی که از هوش مصنوعی الهام می‌گیره. از ایده‌ی اولیه تا
-          نتیجه‌ی نهایی.
+          سایت اختصاصی برای کسب‌وکارهایی که به «قالب آماده» راضی نیستن —
+          طراحی از صفر، کد سبک و سریع، و هوش مصنوعی که ایده‌ها رو جلوتر
+          می‌بره.
         </p>
 
         <ul className="hero-tech" aria-label="تکنولوژی‌های مورد استفاده">

@@ -3,52 +3,33 @@ import { Vazirmatn } from "next/font/google";
 
 /* ═══════════════════════════════════════════════════════════
    CSS — Order matters! Tokens → Base → Layout → Pages → Enhancements
-   ⚠️ globals.css is disabled — all styles are now in modular files
    ═══════════════════════════════════════════════════════════ */
 
-/* 1. Design tokens (CSS variables) */
 import "@/styles/tokens.css";
-
-/* 2. Base — reset, layout, typography, buttons, forms, utilities */
 import "@/styles/base.css";
-
-/* 3. Layout — nav, hero, services, portfolio */
 import "@/styles/layout.css";
-
-/* 4. Layout more — project viewer, about, why, final CTA */
 import "@/styles/layout-more.css";
-
-/* 5. Footer effects — footer, back-to-top, reveal, animations */
 import "@/styles/footer-effects.css";
-
-/* 6. Pages — order, form, success, 404 */
 import "@/styles/pages.css";
-
-/* 7. Responsive — media queries, reduced motion, print */
 import "@/styles/responsive.css";
-
-/* 8. Enhancements — all batches, overrides, editorial, FAQ, etc. */
 import "@/styles/enhancements.css";
-
-/* 9. Mobile fix — glass dock mobile nav */
 import "@/styles/mobile-fix.css";
-
-/* 10. Blog styles */
 import "@/app/blog/blog.css";
-/* 11. Theme toggle — legendary sky edition (overrides everything above) */
 import "@/styles/theme-toggle.css";
-
-/* 11. globals.css is now disabled — all styles migrated to modular files */
-// import "./globals.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { allSchemas } from "@/lib/schema";
 
+/* ─────────────────────────────────────────────────────────────
+   VARIABLE FONT — Vazirmatn
+   - No `weight` field → Next.js auto-loads variable font
+   - Weight axis 100–900 available at runtime
+   - Only Arabic + Latin subsets (saves ~56KB vs full)
+   ───────────────────────────────────────────────────────────── */
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "700", "800"],
   variable: "--font-vazirmatn",
   display: "swap",
   preload: true,
@@ -145,7 +126,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
   viewportFit: "cover",
   colorScheme: "light dark",
   themeColor: [
@@ -158,9 +138,16 @@ const themeInitScript = `
 (function () {
   try {
     var stored = localStorage.getItem('theme');
-    var theme = 'light';
+    var theme;
     if (stored === 'light' || stored === 'dark') {
       theme = stored;
+    } else if (
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      theme = 'dark';
+    } else {
+      theme = 'light';
     }
     document.documentElement.setAttribute('data-theme', theme);
   } catch (e) {

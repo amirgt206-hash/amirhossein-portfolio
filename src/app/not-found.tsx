@@ -1,22 +1,30 @@
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
 
+/* سال شمسی جاری */
+const CURRENT_PERSIAN_YEAR = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+})
+  .format(new Date())
+  .replace(/[^\u06F0-\u06F9]/g, "")
+  .slice(0, 4);
+
 const suggestions = [
-  { label: "خانه", href: "/", description: "شروع دوباره از ابتدا" },
+  { label: "خانه", href: "/", description: "برگرد به شروع" },
   {
     label: "خدمات",
     href: "/#services",
-    description: "چهار مسیر برای شروع",
+    description: "چهار مسیر برای همکاری",
   },
   {
     label: "نمونه‌کارها",
     href: "/#portfolio",
-    description: "دیدن پروژه‌ها",
+    description: "پروژه‌های واقعی",
   },
   {
-    label: "سفارش پروژه",
+    label: "شروع پروژه",
     href: "/order",
-    description: "شروع همکاری",
+    description: "ایده‌ات رو بفرست",
   },
 ];
 
@@ -56,13 +64,13 @@ export default function NotFound() {
             </h1>
 
             <p>
-              به نظر می‌رسد صفحه‌ای که دنبال آن هستید وجود ندارد،
-              جابه‌جا شده یا آدرس آن اشتباه وارد شده است.
+              احتمالاً آدرس اشتباه تایپ شده یا این صفحه جابه‌جا شده.
+              از مسیرهای زیر می‌تونی ادامه بدی.
             </p>
 
             <div className="not-found-actions">
               <Link href="/" className="button button-primary">
-                بازگشت به صفحه اصلی
+                برگشت به صفحه اصلی
                 <span aria-hidden="true">←</span>
               </Link>
 
@@ -103,7 +111,7 @@ export default function NotFound() {
           {/* ── Bottom bar ── */}
           <div className="not-found-bottom">
             <span>DESIGN / DEVELOPMENT / AI</span>
-            <span>© {new Date().getFullYear()}</span>
+            <span>© {CURRENT_PERSIAN_YEAR}</span>
           </div>
         </div>
       </div>

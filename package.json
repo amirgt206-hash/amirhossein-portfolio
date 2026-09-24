@@ -2,21 +2,19 @@
   "name": "amirhossein-sherkaei-portfolio",
   "version": "1.0.0",
   "private": true,
-  "browserslist": [
-    "chrome >= 111",
-    "edge >= 111",
-    "firefox >= 111",
-    "safari >= 16.4"
-  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:blog": "node scripts/seed-blogs.js"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.20",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "gray-matter": "^4.0.3",

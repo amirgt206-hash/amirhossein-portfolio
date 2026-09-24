@@ -1,7 +1,7 @@
 /* ============================================================
    BASE — Reset, Layout, Glass, Typography, Utilities,
           Buttons, Forms, Badges, Divider, Tooltip, Skeleton, Toast
-   (Extracted from globals.css sections 1-12, unchanged)
+   Typography Edition 2026
    ============================================================ */
 
 /* ============================================================
@@ -17,6 +17,12 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+  font-variant-numeric: normal;
+  font-synthesis: none;
 }
 
 html,
@@ -29,14 +35,15 @@ body {
   margin: 0;
   min-width: 320px;
   background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif;
+  color: var(--ink-2);
+  font-family: var(--font-sans);
   font-size: var(--fs-body);
-  line-height: 1.75;
+  line-height: var(--lh-body);
+  font-weight: 400;
   font-feature-settings: "ss01", "ss02";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+  letter-spacing: var(--tracking-normal);
+  overflow-wrap: break-word;
   transition:
     background-color var(--duration-normal) var(--ease-out),
     color var(--duration-normal) var(--ease-out);
@@ -49,6 +56,8 @@ select {
   font: inherit;
   color: inherit;
   font-feature-settings: inherit;
+  font-optical-sizing: inherit;
+  letter-spacing: inherit;
 }
 
 button {
@@ -84,7 +93,8 @@ img {
   -webkit-user-drag: none;
 }
 
-h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, figure, blockquote, dl, dd {
   margin: 0;
 }
 
@@ -132,6 +142,7 @@ select {
   }
 }
 
+/* ── Custom scrollbar ── */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--line-strong) transparent;
@@ -215,7 +226,7 @@ select {
 }
 
 /* ============================================================
-   3. Glass system — 8 layers
+   3. Glass system
    ============================================================ */
 .glass-minimal {
   background: color-mix(in srgb, var(--surface) 40%, transparent);
@@ -295,66 +306,142 @@ select {
 }
 
 /* ============================================================
-   4. Typography
+   4. Typography — 2026 Standards
    ============================================================ */
+
+/* ─────────────────────────────────────────────────────────────
+   HEADINGS
+   - text-wrap: balance prevents orphaned words in titles
+   - tighter line-height as size grows
+   - Persian script never gets letter-spacing
+   ───────────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
   color: var(--ink);
+  font-weight: 800;
+  text-wrap: balance;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
 }
 
+h1 {
+  font-size: var(--fs-h1);
+  font-weight: 900;
+  line-height: var(--lh-h1);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  font-weight: 800;
+  line-height: var(--lh-h2);
+  letter-spacing: var(--tracking-tight);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  line-height: var(--lh-h3);
+}
+
+h4 {
+  font-size: var(--fs-body);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+}
+
+h5, h6 {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BODY TEXT
+   ───────────────────────────────────────────────────────────── */
+p {
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+  text-wrap: pretty;
+  max-width: var(--reading-wide);
+}
+
+/* ── Display ── */
 .display {
   font-size: var(--fs-display);
   font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+  text-wrap: balance;
 }
 
 .h1 {
   font-size: var(--fs-h1);
   font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
+  line-height: var(--lh-h1);
+  letter-spacing: var(--tracking-tight);
 }
 
 .h2 {
   font-size: var(--fs-h2);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: var(--lh-h2);
+  letter-spacing: var(--tracking-tight);
 }
 
 .h3 {
   font-size: var(--fs-h3);
   font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
+  line-height: var(--lh-h3);
 }
 
+/* ── Lead paragraph ── */
 .body {
   font-size: var(--fs-body);
   font-weight: 400;
-  line-height: 1.85;
+  line-height: var(--lh-body);
   color: var(--ink-2);
 }
 
 .body-lead {
-  font-size: clamp(17px, 1.4vw, 20px);
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
   font-weight: 500;
   line-height: 1.8;
   color: var(--ink);
+  text-wrap: pretty;
+  max-width: var(--reading-wide);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   META / MONO — LTR only
+   ⚠️ Persian script must NEVER appear in these
+   ───────────────────────────────────────────────────────────── */
 .meta {
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--ink-3);
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
 }
 
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+
+/* ── Eyebrow ── */
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -362,7 +449,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--ink-3);
   font-size: var(--fs-micro);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
 
@@ -378,6 +465,7 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
+/* ── Section index ── */
 .section-index {
   display: flex;
   align-items: center;
@@ -385,9 +473,12 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 20px;
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  letter-spacing: 0.2em;
+  letter-spacing: var(--tracking-wider);
   color: var(--ink-3);
   text-transform: uppercase;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
 }
 
 .section-index::before {
@@ -399,6 +490,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 4px var(--accent-tint);
 }
 
+/* ── Section heading ── */
 .section-heading {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
@@ -411,8 +503,9 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 18px;
   font-size: var(--fs-h1);
   font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+  line-height: var(--lh-h1);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
 }
 
 .section-heading h2 span {
@@ -428,8 +521,9 @@ h1, h2, h3, h4, h5, h6 {
 .section-heading > p {
   color: var(--ink-2);
   font-size: var(--fs-body);
-  max-width: 400px;
-  line-height: 1.85;
+  max-width: var(--reading-narrow);
+  line-height: var(--lh-body);
+  text-wrap: pretty;
 }
 
 .section-heading--center {
@@ -439,6 +533,106 @@ h1, h2, h3, h4, h5, h6 {
 
 .section-heading--center > p {
   margin-inline: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LISTS
+   ───────────────────────────────────────────────────────────── */
+ul:not([class]),
+ol:not([class]) {
+  padding-inline-start: 1.5em;
+  margin-block: 1em;
+}
+
+ul:not([class]) li,
+ol:not([class]) li {
+  padding-inline-start: 0.25em;
+  margin-block: 0.35em;
+  line-height: var(--lh-body);
+}
+
+ul:not([class]) li {
+  list-style: disc;
+}
+
+ol:not([class]) li {
+  list-style: decimal;
+}
+
+ul:not([class]) li::marker,
+ol:not([class]) li::marker {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   QUOTES
+   ───────────────────────────────────────────────────────────── */
+blockquote {
+  hanging-punctuation: first last;
+  font-style: italic;
+  line-height: var(--lh-body);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CODE — always LTR, tabular nums
+   ───────────────────────────────────────────────────────────── */
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.925em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+code {
+  padding: 0.15em 0.4em;
+  background: var(--paper-2);
+  border-radius: 6px;
+  font-feature-settings: "calt" 1;
+}
+
+kbd {
+  padding: 0.15em 0.4em;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FIGURES & CAPTIONS
+   ───────────────────────────────────────────────────────────── */
+figure {
+  margin-block: 1.5em;
+}
+
+figcaption {
+  margin-top: 0.75em;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--ink-3);
+  text-wrap: balance;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   NUMBER FORMATTING HELPERS
+   ───────────────────────────────────────────────────────────── */
+.num-en {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.num-fa {
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-variant-numeric: normal;
 }
 
 /* ============================================================
@@ -451,22 +645,11 @@ h1, h2, h3, h4, h5, h6 {
 .text-start { text-align: start; }
 .text-end { text-align: end; }
 
-.ltr { direction: ltr; }
-.rtl { direction: rtl; }
+.ltr { direction: ltr; unicode-bidi: isolate; }
+.rtl { direction: rtl; unicode-bidi: isolate; }
 
-.mono {
-  font-family: var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.balance {
-  text-wrap: balance;
-}
-
-.pretty {
-  text-wrap: pretty;
-}
+.balance { text-wrap: balance; }
+.pretty { text-wrap: pretty; }
 
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
@@ -534,11 +717,13 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-full);
   font-size: var(--fs-small);
   font-weight: 600;
-  letter-spacing: 0.005em;
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--lh-tight);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
   white-space: nowrap;
+  text-wrap: nowrap;
   transition:
     transform var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),
@@ -630,39 +815,22 @@ h1, h2, h3, h4, h5, h6 {
   transform: none;
 }
 
-.button-text::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: -2px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--duration-normal) var(--ease-out);
-}
-
-.button-text:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
 .button-sm {
   min-height: 40px;
   padding-inline: 18px;
-  font-size: 12.5px;
+  font-size: 0.8125rem;
 }
 
 .button-lg {
   min-height: 60px;
   padding-inline: 32px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .button-xl {
   min-height: 68px;
   padding-inline: 40px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -706,8 +874,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--ink);
-  font-size: 14.5px;
-  line-height: 1.6;
+  font-size: 0.9375rem;
+  line-height: var(--lh-tight);
   outline: none;
   transition:
     border-color var(--duration-fast) var(--ease-out),
@@ -718,7 +886,7 @@ h1, h2, h3, h4, h5, h6 {
 .textarea {
   min-height: 150px;
   resize: vertical;
-  line-height: 1.85;
+  line-height: var(--lh-body);
 }
 
 .input:hover,
@@ -753,7 +921,7 @@ h1, h2, h3, h4, h5, h6 {
   appearance: none;
   -webkit-appearance: none;
   padding-inline-end: 44px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23716b64' stroke-width='2' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a5550' stroke-width='2' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");
   background-repeat: no-repeat;
   background-position: left 14px center;
   background-size: 16px;
@@ -763,6 +931,7 @@ h1, h2, h3, h4, h5, h6 {
   background-position: left 14px center;
 }
 
+/* ── Checkbox ── */
 .checkbox {
   display: inline-flex;
   align-items: center;
@@ -817,6 +986,7 @@ h1, h2, h3, h4, h5, h6 {
   outline-offset: 2px;
 }
 
+/* ── Radio ── */
 .radio {
   display: inline-flex;
   align-items: center;
@@ -874,13 +1044,13 @@ h1, h2, h3, h4, h5, h6 {
 .field-hint {
   font-size: var(--fs-micro);
   color: var(--ink-3);
-  line-height: 1.6;
+  line-height: var(--lh-small);
 }
 
 .field-error {
   font-size: var(--fs-micro);
   color: var(--danger);
-  line-height: 1.6;
+  line-height: var(--lh-small);
 }
 
 .input-error {
@@ -900,12 +1070,15 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   border: 1px solid var(--line);
   color: var(--ink-3);
   background: var(--surface);
   line-height: 1;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
 }
 
 .badge-accent {
@@ -945,9 +1118,11 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-wide);
   color: var(--ink-3);
   text-transform: uppercase;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
   transition:
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
@@ -968,8 +1143,9 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  letter-spacing: 0.2em;
+  letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
+  direction: ltr;
 }
 
 .divider::before,
@@ -1007,7 +1183,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--paper);
   font-size: var(--fs-micro);
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-normal);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -1086,6 +1262,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--line);
   box-shadow: var(--shadow-lg);
   font-size: var(--fs-small);
+  line-height: var(--lh-small);
   animation: toastIn var(--duration-normal) var(--ease-out);
 }
 

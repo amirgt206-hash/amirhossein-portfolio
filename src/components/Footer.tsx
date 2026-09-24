@@ -9,9 +9,16 @@ const footerNav = [
   { label: "سفارش پروژه", href: "/order" },
 ];
 
+/* سال شمسی جاری — خودکار از تاریخ سیستم محاسبه می‌شود */
+const CURRENT_PERSIAN_YEAR = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+})
+  .format(new Date())
+  .replace(/[^\u06F0-\u06F9]/g, "")
+  .slice(0, 4);
+
 export default function Footer() {
   const contactEmail = process.env.PROJECT_CONTACT_EMAIL;
-  const year = new Date().getFullYear();
 
   return (
     <footer className="site-footer">
@@ -25,7 +32,7 @@ export default function Footer() {
           <h2 className="footer-cta-title">
             ایده‌ای داری؟
             <br />
-            <em>بیایید بسازیمش.</em>
+            <em>بیا بسازیمش.</em>
           </h2>
 
           <div className="footer-cta-actions">
@@ -93,7 +100,7 @@ export default function Footer() {
         {/* ── Bottom bar ── */}
         <div className="footer-bottom">
           <span className="footer-bottom-item">
-            © {year} — تمامی حقوق محفوظ است.
+            © {CURRENT_PERSIAN_YEAR} — تمامی حقوق محفوظ است.
           </span>
 
           <span className="footer-bottom-center">

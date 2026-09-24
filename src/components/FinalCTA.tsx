@@ -12,27 +12,28 @@ export default function FinalCTA() {
         <div className="final-cta reveal">
           {/* ── Left column: text + CTAs ── */}
           <div className="final-cta-content">
-            <span className="section-index">05 — START A PROJECT</span>
+            <span className="section-index">06 — START A PROJECT</span>
 
             <h2 id="final-cta-title">
               ایده‌ای داری؟
               <br />
-              <span>بیایید بسازیمش.</span>
+              <span>بیا بسازیمش.</span>
             </h2>
 
             <p>
-              اگر برای کسب‌وکار یا برندت به یک وب‌سایت حرفه‌ای یا محتوای
-              تبلیغاتی متفاوت نیاز داری، جزئیات پروژه را ارسال کن.
+              اگر پروژه‌ات مشخص است، همین حالا جزئیات را برایم بفرست.
+              اگر هنوز در مرحله‌ی ایده هستی، همان را هم بنویس — با هم
+              به یک طرح روشن می‌رسیم.
             </p>
 
             <div className="final-cta-actions">
               <Link href="/order" className="button button-primary button-lg">
-                سفارش پروژه
+                شروع پروژه
                 <span aria-hidden="true">←</span>
               </Link>
 
               <a href="#portfolio" className="button button-secondary button-lg">
-                مشاهده نمونه‌کارها
+                دیدن نمونه‌کارها
               </a>
             </div>
 
@@ -50,16 +51,20 @@ export default function FinalCTA() {
           <aside className="final-cta-aside" aria-hidden="true">
             <div className="final-cta-aside-item">
               <span className="final-cta-aside-label">پاسخ</span>
-              <strong className="final-cta-aside-value">در اولین فرصت</strong>
+              <strong className="final-cta-aside-value">
+                حداکثر ۲۴ ساعت
+              </strong>
             </div>
 
             <div className="final-cta-aside-item">
               <span className="final-cta-aside-label">روش تماس</span>
-              <strong className="final-cta-aside-value">پیامک · روبیکا · ایتا</strong>
+              <strong className="final-cta-aside-value">
+                پیامک · روبیکا · ایتا
+              </strong>
             </div>
 
             <div className="final-cta-aside-item">
-              <span className="final-cta-aside-label">پروژه‌ها</span>
+              <span className="final-cta-aside-label">حوزه‌ی کار</span>
               <strong className="final-cta-aside-value">
                 وب‌سایت · تبلیغات · ویدیو
               </strong>

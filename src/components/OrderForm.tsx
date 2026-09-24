@@ -4,12 +4,12 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 
 const projectTypes = [
-  { value: "web-custom", label: "طراحی و توسعه وب‌سایت اختصاصی" },
-  { value: "web-ai", label: "طراحی وب‌سایت با کمک هوش مصنوعی" },
-  { value: "banner-ai", label: "بنر و تصاویر تبلیغاتی با هوش مصنوعی" },
-  { value: "video-ai", label: "ویدیوی تبلیغاتی با هوش مصنوعی" },
-  { value: "combined", label: "ترکیبی از چند خدمت" },
-  { value: "other", label: "سایر" },
+  { value: "web-custom", label: "وب‌سایت اختصاصی" },
+  { value: "web-ai", label: "وب‌سایت + AI" },
+  { value: "banner-ai", label: "بنر و تصاویر" },
+  { value: "video-ai", label: "ویدیوی تبلیغاتی" },
+  { value: "combined", label: "چند خدمت با هم" },
+  { value: "other", label: "چیز دیگه" },
 ];
 
 const contactMethods = [
@@ -92,36 +92,39 @@ export default function OrderForm() {
 
     /* Validation سمت کلاینت (برای UX سریع‌تر) */
     if (!form.firstName.trim()) {
-      setErrorMessage("لطفاً نام خود را وارد کنید.");
+      setErrorMessage("اسمت رو بنویس تا بدونم با کی صحبت می‌کنم.");
       return;
     }
 
     if (!form.phone.trim()) {
-      setErrorMessage("لطفاً شماره موبایل خود را وارد کنید.");
+      setErrorMessage(
+        "شماره موبایل لازمه تا بتونم باهات تماس بگیرم."
+      );
       return;
     }
 
     if (!form.personalProject && !form.businessName.trim()) {
       setErrorMessage(
-        "لطفاً نام کسب‌وکار را وارد کنید یا پروژه شخصی را انتخاب کنید."
+        "نام کسب‌وکار رو بنویس، یا گزینه‌ی «پروژه شخصی» رو تیک بزن."
       );
       return;
     }
 
     if (form.projectTypes.length === 0) {
-      setErrorMessage("لطفاً حداقل یک نوع پروژه را انتخاب کنید.");
+      setErrorMessage("حداقل یک نوع پروژه رو انتخاب کن.");
       return;
     }
 
     if (!form.description.trim()) {
-      setErrorMessage("لطفاً توضیحات پروژه را وارد کنید.");
+      setErrorMessage(
+        "چند خط درباره‌ی پروژه بنویس — حتی خلاصه و بدون جزئیات."
+      );
       return;
     }
 
     setStatus("sending");
 
     try {
-      /* ارسال به API Route داخلی */
       const response = await fetch("/api/project-request", {
         method: "POST",
         headers: {
@@ -137,23 +140,22 @@ export default function OrderForm() {
           projectTypes: form.projectTypes,
           description: form.description.trim(),
           contactPreference: form.contactPreference,
-          website: form.website, // honeypot
+          website: form.website,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        /* اگه rate-limit بود، پیام مخصوصش رو نشون بده */
         if (response.status === 429) {
           setErrorMessage(
             data.message ||
-              "تعداد درخواست‌ها زیاد است. لطفاً چند دقیقه دیگر تلاش کنید."
+              "کمی زیادی سریع فرستادی. چند دقیقه دیگه دوباره تلاش کن."
           );
         } else {
           setErrorMessage(
             data.message ||
-              "ارسال درخواست انجام نشد. لطفاً چند لحظه بعد دوباره تلاش کنید."
+              "ارسال نشد. یک بار دیگه امتحان کن، اگر باز هم نشد بهم پیام بده."
           );
         }
         setStatus("error");
@@ -166,7 +168,7 @@ export default function OrderForm() {
       console.error("Order form error:", error);
       setStatus("error");
       setErrorMessage(
-        "ارسال درخواست انجام نشد. لطفاً اتصال اینترنت خود را بررسی کنید."
+        "اتصال برقرار نشد. اینترنتت رو چک کن یا یک بار دیگه امتحان کن."
       );
     }
   };
@@ -179,13 +181,14 @@ export default function OrderForm() {
           ✓
         </div>
 
-        <span className="eyebrow">درخواست ارسال شد</span>
+        <span className="eyebrow">درخواست دریافت شد</span>
 
-        <h2>ممنونم، درخواستت با موفقیت ثبت شد.</h2>
+        <h2>ممنون — پیامت به دستم رسید.</h2>
 
         <p>
-          اطلاعات پروژه دریافت شد و برای بررسی ارسال شده است. در اولین
-          فرصت از طریق روش ارتباطی انتخاب‌شده با شما تماس گرفته می‌شود.
+          حداکثر ۲۴ ساعت دیگه از طریق روشی که انتخاب کردی باهات
+          تماس می‌گیرم. اگر تا اون موقع سؤالی داشتی، می‌تونی از فرم
+          زیر دوباره پیام بفرستی.
         </p>
 
         <div className="order-success-actions">
@@ -217,15 +220,15 @@ export default function OrderForm() {
         <div className="form-section-heading">
           <span>01</span>
           <div>
-            <h2>اطلاعات شما</h2>
-            <p>برای شروع، اطلاعات تماس خود را وارد کنید.</p>
+            <h2>درباره‌ی تو</h2>
+            <p>اول بگو با کی صحبت می‌کنم و چطور تماس بگیرم.</p>
           </div>
         </div>
 
         <div className="form-grid">
           <label className="form-field">
             <span>
-              نام <b>*</b>
+              نام <b aria-hidden="true">*</b>
             </span>
             <input
               type="text"
@@ -235,6 +238,7 @@ export default function OrderForm() {
               }
               autoComplete="given-name"
               maxLength={80}
+              placeholder="علی"
             />
           </label>
 
@@ -248,12 +252,13 @@ export default function OrderForm() {
               }
               autoComplete="family-name"
               maxLength={80}
+              placeholder="رضایی"
             />
           </label>
 
           <label className="form-field">
             <span>
-              شماره موبایل <b>*</b>
+              شماره موبایل <b aria-hidden="true">*</b>
             </span>
             <input
               type="tel"
@@ -264,6 +269,8 @@ export default function OrderForm() {
               autoComplete="tel"
               inputMode="tel"
               maxLength={40}
+              placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹"
+              dir="ltr"
             />
           </label>
 
@@ -277,6 +284,8 @@ export default function OrderForm() {
               }
               autoComplete="email"
               maxLength={160}
+              placeholder="you@example.com"
+              dir="ltr"
             />
           </label>
         </div>
@@ -287,9 +296,9 @@ export default function OrderForm() {
         <div className="form-section-heading">
           <span>02</span>
           <div>
-            <h2>درباره پروژه</h2>
+            <h2>درباره‌ی پروژه</h2>
             <p>
-              کمی درباره کسب‌وکار و چیزی که می‌خواهید بسازید بگویید.
+              چند خط توضیح بده تا بفهمم دقیقاً چی می‌خوای بسازی.
             </p>
           </div>
         </div>
@@ -297,7 +306,7 @@ export default function OrderForm() {
         <div className="form-grid">
           <label className="form-field form-field-full">
             <span>
-              نام کسب‌وکار <b>*</b>
+              نام کسب‌وکار <b aria-hidden="true">*</b>
             </span>
             <input
               type="text"
@@ -307,6 +316,7 @@ export default function OrderForm() {
               }
               disabled={form.personalProject}
               maxLength={160}
+              placeholder="مثلاً: کافه نیلا، آموزشگاه ویرا، ..."
             />
           </label>
 
@@ -318,13 +328,21 @@ export default function OrderForm() {
                 updateField("personalProject", event.target.checked)
               }
             />
-            <span>این یک پروژه شخصی است</span>
+            <span>
+              این یک پروژه‌ی شخصیه، نه کسب‌وکار
+            </span>
           </label>
 
           <fieldset className="form-fieldset form-field-full">
             <legend>
-              نوع پروژه <b>*</b>
+              چه نوع پروژه‌ای داری؟ <b aria-hidden="true">*</b>
             </legend>
+            <p
+              className="field-hint"
+              style={{ marginBottom: "14px", marginTop: "-4px" }}
+            >
+              می‌تونی چند تا رو با هم انتخاب کنی.
+            </p>
 
             <div className="project-type-grid">
               {projectTypes.map((type) => (
@@ -349,7 +367,7 @@ export default function OrderForm() {
 
           <label className="form-field form-field-full">
             <span>
-              توضیحات پروژه <b>*</b>
+              توضیحات پروژه <b aria-hidden="true">*</b>
             </span>
             <textarea
               value={form.description}
@@ -358,8 +376,15 @@ export default function OrderForm() {
               }
               rows={7}
               maxLength={5000}
-              placeholder="هدف پروژه، امکانات موردنیاز، سبک موردنظر یا هر توضیحی که فکر می‌کنید مهم است..."
+              placeholder="مثلاً: می‌خوام یه فروشگاه آنلاین برای لباس زنانه بسازم. حدود ۵۰ محصول دارم، رنگ و سایز هم مهمه. اولش فقط می‌خوام ببینم چه شکلی می‌شه، بعد کامل می‌کنم."
             />
+            <span
+              className="field-hint"
+              style={{ marginTop: "8px" }}
+            >
+              حتی چند خط کافیه — لازم نیست کامل باشه. با هم جزئیات
+              رو مشخص می‌کنیم.
+            </span>
           </label>
         </div>
       </div>
@@ -369,13 +394,13 @@ export default function OrderForm() {
         <div className="form-section-heading">
           <span>03</span>
           <div>
-            <h2>روش ارتباط</h2>
-            <p>ترجیح می‌دهید پاسخ را از چه طریقی دریافت کنید؟</p>
+            <h2>چطور جوابت رو بدم؟</h2>
+            <p>روشی که راحت‌تری رو انتخاب کن.</p>
           </div>
         </div>
 
         <fieldset className="form-fieldset">
-          <legend>روش ارتباط ترجیحی</legend>
+          <legend>روش تماس ترجیحی</legend>
 
           <div className="contact-methods">
             {contactMethods.map((method) => (
@@ -425,7 +450,7 @@ export default function OrderForm() {
       {/* Submit */}
       <div className="form-submit-row">
         <p>
-          با ارسال این فرم، اطلاعات پروژه برای بررسی اولیه ارسال می‌شود.
+          بعد از ارسال، حداکثر ۲۴ ساعت دیگه جواب می‌گیری.
         </p>
 
         <button
@@ -434,8 +459,8 @@ export default function OrderForm() {
           disabled={status === "sending"}
         >
           {status === "sending"
-            ? "در حال ارسال..."
-            : "ارسال درخواست پروژه"}
+            ? "داره ارسال می‌شه..."
+            : "ارسال و شروع گفت‌وگو"}
 
           <span aria-hidden="true">←</span>
         </button>

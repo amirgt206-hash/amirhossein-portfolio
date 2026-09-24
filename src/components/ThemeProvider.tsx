@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -17,49 +18,56 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
+const MORPH_DURATION_MS = 400;
+
+function readThemeFromDOM(): Theme {
+  if (typeof document === "undefined") return "light";
+  const current = document.documentElement.getAttribute("data-theme");
+  return current === "dark" ? "dark" : "light";
+}
+
 export function ThemeProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  /* ── تم اولیه را از DOM می‌خوانیم (اسکریپت head قبلاً set کرده) ── */
+  const [theme, setTheme] = useState<Theme>(readThemeFromDOM);
 
+  /* ── همگام‌سازی با DOM در mount (محض اطمینان) ── */
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-
-    if (savedTheme === "light" || savedTheme === "dark") {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute("data-theme", savedTheme);
-      return;
-    }
-
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-    const initialTheme: Theme = prefersDark ? "dark" : "light";
-
-    setTheme(initialTheme);
-    document.documentElement.setAttribute("data-theme", initialTheme);
+    const current = readThemeFromDOM();
+    setTheme(current);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((current) => {
       const next: Theme = current === "dark" ? "light" : "dark";
 
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
+      const root = document.documentElement;
+      root.classList.add("is-theme-morphing");
+      root.setAttribute("data-theme", next);
+
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        /* localStorage ممکن است در حالت private مسدود باشد */
+      }
+
+      window.setTimeout(() => {
+        root.classList.remove("is-theme-morphing");
+      }, MORPH_DURATION_MS);
 
       return next;
     });
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
       theme,
       toggleTheme,
     }),
-    [theme]
+    [theme, toggleTheme]
   );
 
   return (

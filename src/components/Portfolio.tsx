@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import ProjectViewer from "@/components/ProjectViewer";
 import { projects, type Project } from "@/content/projects";
@@ -58,14 +59,13 @@ export default function Portfolio() {
 
                 <div className="portfolio-card-canvas">
                   {project.coverImage ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
+                    <Image
                       src={project.coverImage}
                       alt={`نمونه‌کار ${project.title} — ${project.category}`}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                      width={800}
-                      height={600}
+                      fill
+                      sizes="(max-width: 720px) 100vw, (max-width: 1080px) 55vw, 640px"
+                      priority={index === 0}
+                      style={{ objectFit: "cover" }}
                     />
                   ) : (
                     <ProjectPreview id={project.id} />

@@ -2,6 +2,7 @@
    ENHANCEMENTS — All batches and overrides
    ⚠️ This file preserves the exact cascade order of globals.css
    ⚠️ Only truly duplicate blocks (blog in globals = blog.css) removed
+   ⚠️ Accessibility fixes migrated to footer-effects.css
    ============================================================ */
 
 /* ============================================================
@@ -524,22 +525,6 @@
   flex-wrap: wrap;
 }
 
-.footer-bottom-item {
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono);
-  letter-spacing: 0.14em;
-  color: var(--ink-3);
-  text-transform: uppercase;
-}
-
-.footer-bottom-center {
-  font-family: var(--font-mono);
-  font-size: var(--fs-mono);
-  letter-spacing: 0.2em;
-  color: var(--ink-3);
-  text-transform: uppercase;
-}
-
 .footer-back-top {
   display: inline-flex;
   align-items: center;
@@ -547,7 +532,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   letter-spacing: 0.16em;
-  color: var(--ink-3);
+  color: var(--ink-3-strong);
   text-transform: uppercase;
   transition: color var(--duration-fast) var(--ease-out);
 }
@@ -561,9 +546,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-  }
-  .footer-bottom-center {
-    display: none;
   }
 }
 
@@ -1175,9 +1157,8 @@
   }
 }
 
-/* ⏸️ تکه ۱ تموم شد — تکه ۲ ادامه‌ی همین فایل‌ه *//* ============================================================
+/* ============================================================
    MOBILE BOTTOM NAVIGATION — from globals.css
-   (kept alongside mobile-fix.css for safety; mobile-fix wins by !important)
    ============================================================ */
 
 .mobile-nav {
@@ -1334,7 +1315,7 @@
     min-height: 52px;
     border-radius: var(--radius-full);
     background: var(--ink);
-    color: var(--bg);
+    color: var(--paper);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
     transition:
@@ -1460,7 +1441,7 @@
   }
 
   [data-theme="dark"] .mobile-nav-cta:active {
-    background: var(--accent-hover);
+    background: var(--accent-2);
   }
 }
 
@@ -1649,7 +1630,7 @@
     display: none;
   }
 
-  .service-num {
+  .service-number {
     font-size: 11px;
   }
 
@@ -1824,7 +1805,7 @@
   .project-modal {
     padding: 0;
     align-items: flex-end;
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    background: color-mix(in srgb, var(--paper) 70%, transparent);
   }
 
   .project-modal-shell {
@@ -2210,10 +2191,6 @@
     gap: 10px;
     font-size: 10.5px;
     line-height: 1.6;
-  }
-
-  .footer-bottom-center {
-    display: none;
   }
 }
 
@@ -3223,7 +3200,7 @@ a:not(.btn):not(.brand):not(.nav-link):not(.mobile-nav-item):not(.mobile-nav-cta
   }
 }
 
-/* ⏸️ تکه ۲ تموم شد — تکه ۳ ادامه‌ی همین فایل‌ه *//* ============================================================
+/* ⏸️ پایان بخش ۱ — بخش ۲ در پیام بعدی *//* ============================================================
    VISUAL POLISH — Refined details everywhere
    ============================================================ */
 
@@ -3408,8 +3385,8 @@ body[dir="rtl"] h3 {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--accent-hover) 100%, #fff 4%) 0%,
-      var(--accent-hover) 100%
+      color-mix(in srgb, var(--accent-2) 100%, #fff 4%) 0%,
+      var(--accent-2) 100%
     );
 }
 
@@ -3441,7 +3418,7 @@ body[dir="rtl"] h3 {
 
 .hero-eyebrow-dot {
   box-shadow:
-    0 0 0 3px var(--success-soft),
+    0 0 0 3px color-mix(in srgb, var(--success) 15%, transparent),
     0 0 12px color-mix(in srgb, var(--success) 40%, transparent);
 }
 
@@ -3524,7 +3501,7 @@ a:focus-visible {
   background:
     linear-gradient(
       180deg,
-      var(--accent-hover) 0%,
+      var(--accent-2) 0%,
       var(--accent-2) 100%
     );
   background-clip: content-box;
@@ -3632,8 +3609,8 @@ a:focus-visible {
   background:
     radial-gradient(
       ellipse 80% 80% at 50% 40%,
-      var(--bg) 0%,
-      color-mix(in srgb, var(--bg) 94%, var(--paper-2)) 100%
+      var(--paper) 0%,
+      color-mix(in srgb, var(--paper) 94%, var(--paper-2)) 100%
     );
 }
 
@@ -4083,7 +4060,7 @@ html:not(.is-theme-morphing) {
     0 8px 20px -8px var(--accent-glow);
 }
 
-.service-item.is-active .service-num {
+.service-item.is-active .service-number {
   color: var(--accent);
   transition: color 400ms var(--ease-out);
 }
@@ -4352,7 +4329,7 @@ textarea {
   font-variant-ligatures: common-ligatures;
 }
 
-.service-num,
+.service-number,
 .why-num,
 .principle-num,
 .hero-meta-value,
@@ -5154,19 +5131,19 @@ a[href="/order"] {
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--error) 8%, transparent) 0%,
-      color-mix(in srgb, var(--error) 4%, transparent) 100%
+      color-mix(in srgb, var(--danger) 8%, transparent) 0%,
+      color-mix(in srgb, var(--danger) 4%, transparent) 100%
     );
   font-size: 14px;
   line-height: 1.7;
-  border-top: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
 
 .order-page .form-message-error {
-  color: var(--error);
+  color: var(--danger);
 }
 
 .order-page .form-message-error::before {
@@ -5177,7 +5154,7 @@ a[href="/order"] {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--error);
+  background: var(--danger);
   color: #fff;
   font-weight: 800;
   font-size: 12px;
@@ -5302,7 +5279,7 @@ a[href="/order"] {
   box-shadow:
     0 0 0 8px color-mix(in srgb, var(--accent) 8%, transparent),
     0 20px 48px -16px var(--accent-glow);
-  animation: successPop 700ms var(--spring) both;
+  animation: successPop 700ms var(--ease-spring) both;
 }
 
 @keyframes successPop {
@@ -5553,7 +5530,7 @@ a[href="/order"] {
   margin-inline-start: 2px;
 }
 
-/* ⏸️ تکه ۳ تموم شد — تکه ۴ ادامه‌ی همین فایل‌ه *//* ============================================================
+/* ============================================================
    NATIVE IMAGES — portfolio + modal
    ============================================================ */
 
@@ -5589,67 +5566,7 @@ a[href="/order"] {
   }
 }
 
-/* ============================================================
-   Accessibility Fix — Footer contrast (WCAG 2.2 AA)
-   ============================================================ */
-
-.site-footer,
-.site-footer *,
-.footer-nav-label,
-.footer-bottom-item,
-.footer-brand,
-.footer-brand-block,
-.footer-brand span {
-  color: #5a5550 !important;
-}
-
-.footer-nav a,
-.footer-nav a:visited {
-  color: #4a4642 !important;
-}
-
-.footer-nav a:hover {
-  color: #e94b2c !important;
-}
-
-/* ============================================================
-   Accessibility Fix — Mobile Nav "سفارش" Button
-   ============================================================ */
-
-.mobile-nav .nav-order-button,
-.mobile-nav a[href="/order"],
-.mobile-nav [aria-label="سفارش پروژه"],
-.mobile-menu .nav-order-button,
-.mobile-menu a[href="/order"],
-[class*="mobile"] .nav-order-button,
-[class*="mobile"] a[href="/order"] {
-  color: #ffffff !important;
-  background-color: #e94b2c !important;
-}
-
-.mobile-nav .nav-order-button *,
-.mobile-nav a[href="/order"] *,
-.mobile-menu .nav-order-button *,
-.mobile-menu a[href="/order"] *,
-[class*="mobile"] .nav-order-button *,
-[class*="mobile"] a[href="/order"] * {
-  color: #ffffff !important;
-}
-
-.mobile-nav a[href="/order"]:hover,
-.mobile-menu a[href="/order"]:hover {
-  background-color: #c93418 !important;
-  color: #ffffff !important;
-}
-
-[data-theme="dark"] .mobile-nav a[href="/order"],
-[data-theme="dark"] .mobile-menu a[href="/order"],
-[data-theme="dark"] [class*="mobile"] a[href="/order"] {
-  color: #ffffff !important;
-  background-color: #e94b2c !important;
-}
-
-/* ============================================================
+/* ⏸️ پایان بخش ۲ — بخش ۳ در پیام بعدی *//* ============================================================
    Footer CTA Block
    ============================================================ */
 
@@ -7319,7 +7236,7 @@ a[href="/order"] {
   gap: 8px;
   margin-bottom: 16px;
   font-size: 0.85rem;
-  color: var(--ink-3, #716b64);
+  color: var(--ink-3);
   letter-spacing: 0.02em;
 }
 
@@ -7349,16 +7266,16 @@ a[href="/order"] {
   border-radius: 2px;
   background: linear-gradient(
     180deg,
-    rgba(233, 75, 44, 0.6),
-    rgba(233, 75, 44, 0.05)
+    color-mix(in srgb, var(--accent) 60%, transparent),
+    color-mix(in srgb, var(--accent) 5%, transparent)
   );
 }
 
 .case-study-section--quote::before {
   background: linear-gradient(
     180deg,
-    rgba(233, 75, 44, 0.85),
-    rgba(233, 75, 44, 0.15)
+    color-mix(in srgb, var(--accent) 85%, transparent),
+    color-mix(in srgb, var(--accent) 15%, transparent)
   );
 }
 
@@ -7369,7 +7286,7 @@ a[href="/order"] {
   margin: 0 0 12px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--ink-1, #0a0908);
+  color: var(--ink);
   letter-spacing: 0.01em;
 }
 
@@ -7382,9 +7299,9 @@ a[href="/order"] {
   padding: 0 8px;
   font-size: 0.68rem;
   font-weight: 500;
-  font-family: var(--font-mono, "SF Mono", monospace);
-  color: #e94b2c;
-  background: rgba(233, 75, 44, 0.1);
+  font-family: var(--font-mono);
+  color: var(--accent);
+  background: var(--accent-tint);
   border-radius: 6px;
   letter-spacing: 0.04em;
 }
@@ -7393,7 +7310,7 @@ a[href="/order"] {
   margin: 0;
   font-size: 0.93rem;
   line-height: 1.75;
-  color: var(--ink-2, #3f3a34);
+  color: var(--ink-2);
 }
 
 .case-study-list {
@@ -7410,7 +7327,7 @@ a[href="/order"] {
   padding-right: 22px;
   font-size: 0.9rem;
   line-height: 1.7;
-  color: var(--ink-2, #3f3a34);
+  color: var(--ink-2);
 }
 
 .case-study-list li::before {
@@ -7421,13 +7338,13 @@ a[href="/order"] {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(233, 75, 44, 0.35);
-  border: 1.5px solid #e94b2c;
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  border: 1.5px solid var(--accent);
 }
 
 .case-study-list--highlight li::before {
-  background: #e94b2c;
-  box-shadow: 0 0 0 3px rgba(233, 75, 44, 0.15);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .case-study-section--quote blockquote {
@@ -7436,13 +7353,13 @@ a[href="/order"] {
   font-size: 0.95rem;
   line-height: 1.8;
   font-style: italic;
-  color: var(--ink-1, #0a0908);
+  color: var(--ink);
   background: linear-gradient(
     135deg,
-    rgba(233, 75, 44, 0.05) 0%,
-    rgba(233, 75, 44, 0.02) 100%
+    var(--accent-tint) 0%,
+    color-mix(in srgb, var(--accent-tint) 40%, transparent) 100%
   );
-  border-right: 3px solid #e94b2c;
+  border-right: 3px solid var(--accent);
   border-radius: 4px 12px 12px 4px;
 }
 
@@ -7458,7 +7375,7 @@ a[href="/order"] {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-3, #716b64);
+  color: var(--ink-3);
 }
 
 .project-modal-tech-list {
@@ -7473,41 +7390,17 @@ a[href="/order"] {
   padding: 6px 12px;
   font-size: 0.78rem;
   font-weight: 500;
-  color: var(--ink-2, #3f3a34);
-  background: rgba(10, 9, 8, 0.04);
-  border: 1px solid rgba(10, 9, 8, 0.08);
+  color: var(--ink-2);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
   border-radius: 999px;
   transition: all 0.2s ease;
 }
 
 .project-modal-tech-chip:hover {
-  background: rgba(233, 75, 44, 0.08);
-  border-color: rgba(233, 75, 44, 0.25);
-  color: #e94b2c;
-}
-
-[data-theme="dark"] .case-study-heading {
-  color: var(--ink-1, #f7f3ee);
-}
-
-[data-theme="dark"] .case-study-section p,
-[data-theme="dark"] .case-study-list li {
-  color: var(--ink-2, #c9c2b8);
-}
-
-[data-theme="dark"] .case-study-section--quote blockquote {
-  color: #f7f3ee;
-  background: linear-gradient(
-    135deg,
-    rgba(233, 75, 44, 0.1) 0%,
-    rgba(233, 75, 44, 0.03) 100%
-  );
-}
-
-[data-theme="dark"] .project-modal-tech-chip {
-  color: #c9c2b8;
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--accent-tint);
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--accent);
 }
 
 @media (max-width: 720px) {
@@ -7555,8 +7448,8 @@ a[href="/order"] {
   position: relative !important;
   z-index: 5;
   padding: 16px 24px !important;
-  background: var(--surface-1, #f7f3ee) !important;
-  border-bottom: 1px solid rgba(10, 9, 8, 0.08);
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--line);
 }
 
 .project-modal-main {
@@ -7572,15 +7465,15 @@ a[href="/order"] {
 }
 
 .project-modal-nav-counter {
-  font-family: var(--font-mono, "SF Mono", monospace);
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.05em;
-  color: var(--ink-3, #716b64);
+  color: var(--ink-3);
 }
 
 [data-theme="dark"] .project-modal-nav {
-  background: var(--surface-1, #0a0908) !important;
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: var(--surface) !important;
+  border-bottom-color: var(--line);
 }
 
 @media (max-width: 720px) {
@@ -7600,17 +7493,17 @@ a[href="/order"] {
   font-family: inherit;
   direction: rtl;
   text-align: right;
-  color: #1a1a1a;
+  color: var(--ink);
   font-size: clamp(1.4rem, 3.5vw, 2.5rem);
   line-height: 1.9;
   letter-spacing: -0.5px;
-  background: rgba(255, 255, 255, 0.75);
+  background: color-mix(in srgb, var(--surface) 75%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 30px 40px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--ink) 6%, transparent);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -7626,23 +7519,23 @@ a[href="/order"] {
   top: 20%;
   height: 60%;
   width: 6px;
-  background: #e63946;
+  background: var(--accent);
   border-radius: 6px 0 0 6px;
 }
 
 .hero-typography .muted-text {
   font-weight: 400;
-  color: #64748b;
+  color: var(--ink-3);
   display: block;
 }
 
 .hero-typography .highlight-text {
   font-weight: 900;
-  color: #0f172a;
+  color: var(--ink);
   display: inline-block;
   position: relative;
   padding-right: 25px;
-  background: linear-gradient(135deg, #0f172a 30%, #e63946 100%);
+  background: linear-gradient(135deg, var(--ink) 30%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: transform 0.3s ease, filter 0.3s ease;
@@ -7650,7 +7543,7 @@ a[href="/order"] {
 
 .hero-typography:hover .highlight-text {
   transform: translateY(-3px);
-  filter: drop-shadow(0 10px 15px rgba(230, 57, 70, 0.2));
+  filter: drop-shadow(0 10px 15px color-mix(in srgb, var(--accent) 20%, transparent));
 }
 
 @media (max-width: 768px) {
@@ -7658,7 +7551,7 @@ a[href="/order"] {
     padding: 20px 25px;
     font-size: 1.3rem;
     line-height: 1.8;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 20px color-mix(in srgb, var(--ink) 5%, transparent);
   }
   .hero-typography .highlight-text {
     padding-right: 15px;

@@ -1,7 +1,6 @@
 /* ============================================================
    FOOTER-EFFECTS — Footer, BackToTop, ScrollProgress,
                     Reveal & animations
-   (Extracted from globals.css sections 23-26, unchanged)
    ============================================================ */
 
 /* ============================================================
@@ -60,7 +59,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   letter-spacing: 0.18em;
-  color: var(--ink-3);
+  color: var(--ink-3-strong);
   text-transform: uppercase;
   direction: ltr;
 }
@@ -94,7 +93,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   letter-spacing: 0.18em;
-  color: var(--ink-3);
+  color: var(--ink-3-strong);
   text-transform: uppercase;
   margin-bottom: 4px;
 }
@@ -129,8 +128,49 @@
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
   letter-spacing: 0.16em;
-  color: var(--ink-3);
+  color: var(--ink-3-strong);
   text-transform: uppercase;
+}
+
+/* ── Footer bottom items (from enhancements) ── */
+.footer-bottom-item,
+.footer-bottom-center {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: 0.14em;
+  color: var(--ink-3-strong);
+  text-transform: uppercase;
+}
+
+.footer-bottom-center {
+  letter-spacing: 0.2em;
+}
+
+.footer-back-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: 0.16em;
+  color: var(--ink-3-strong);
+  text-transform: uppercase;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.footer-back-top:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .footer-bottom-center {
+    display: none;
+  }
 }
 
 /* ============================================================
@@ -177,7 +217,7 @@
 }
 
 /* ============================================================
-   25. Scroll progress (optional)
+   25. Scroll progress
    ============================================================ */
 .scroll-progress {
   position: fixed;
