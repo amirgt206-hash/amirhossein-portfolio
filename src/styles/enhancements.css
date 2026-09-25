@@ -8166,3 +8166,48 @@ a[href="/order"] {
 }
 
 /* ✅ enhancements.css کامل شد */
+/* ═══════════════════════════════════════════════════════════
+   PORTFOLIO VIEW-ALL LINK
+   ═══════════════════════════════════════════════════════════ */
+.portfolio-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.portfolio-view-all:hover {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--accent);
+  transform: translateX(-3px);
+}
+
+.portfolio-view-all span[aria-hidden="true"] {
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.portfolio-view-all:hover span[aria-hidden="true"] {
+  transform: translateX(-4px);
+}
+
+/* Make .portfolio-card a link — remove button-specific styles */
+a.portfolio-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  text-align: start;
+}

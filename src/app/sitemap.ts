@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog";
+import { getAllProjectSlugs } from "@/content/projects";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -7,6 +8,7 @@ const siteUrl =
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
+  const projectSlugs = getAllProjectSlugs();
   const now = new Date();
 
   /* ── Blog posts ── */
@@ -17,6 +19,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  /* ── Work (project) pages ── */
+  const workEntries: MetadataRoute.Sitemap = projectSlugs.map((slug) => ({
+    url: `${siteUrl}/work/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
   /* ── Static pages ── */
   const staticEntries: MetadataRoute.Sitemap = [
     {
@@ -24,6 +34,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 1,
+    },
+    {
+      url: `${siteUrl}/work`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${siteUrl}/blog`,
@@ -39,5 +55,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return [...staticEntries, ...blogEntries];
+  return [...staticEntries, ...workEntries, ...blogEntries];
 }
