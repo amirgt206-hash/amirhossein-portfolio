@@ -14,32 +14,33 @@ export type SensoryKind =
   | "swipe"
   | "snap";
 
-const HAPTIC: Record<SensoryKind, number | number[]> = {
-  tap: 8,
-  select: 12,
-  toggle: 10,
-  success: [12, 40, 12],
-  error: [18, 60, 18],
-  longPress: 15,
-  swipe: 6,
-  snap: 10,
+/* ═══════════════════════════════════════════════════════════
+   HAPTIC PATTERNS — Using arrays for wider compatibility
+   ------------------------------------------------------------
+   Single duration values < 1000ms are ignored on some Android
+   devices (Pixel 9, Android 16). Using array patterns with a
+   leading pause forces the motor to engage reliably.
+   ═══════════════════════════════════════════════════════════ */
+
+const HAPTIC: Record<SensoryKind, number[]> = {
+  tap: [0, 30],
+  select: [0, 40],
+  toggle: [0, 35],
+  snap: [0, 30],
+  swipe: [0, 20],
+  longPress: [0, 50],
+  success: [0, 40, 60, 40],
+  error: [0, 60, 80, 60],
 };
 
 /* ═══════════════════════════════════════════════════════════
    iOS HAPTIC — Taptic Engine via hidden checkbox
-   ------------------------------------------------------------
-   iOS Safari doesn't support navigator.vibrate().
-   But the "switch" checkbox (iOS 17.4-26.4) triggered haptic.
-   Apple patched it in 26.5+, but the fallback still helps on
-   older iOS versions. On Android, navigator.vibrate() works.
    ═══════════════════════════════════════════════════════════ */
-
 let iosHapticInput: HTMLInputElement | null = null;
 
 function ensureIosHapticInput() {
   if (typeof document === "undefined") return null;
   if (iosHapticInput) return iosHapticInput;
-
   const input = document.createElement("input");
   input.type = "checkbox";
   input.setAttribute("switch", "");
@@ -65,21 +66,37 @@ function triggerIosHaptic() {
   }
 }
 
-function vibrate(pattern: number | number[]) {
+/* ═══════════════════════════════════════════════════════════
+   VIBRATE — with platform detection and fallbacks
+   ═══════════════════════════════════════════════════════════ */
+function vibrate(pattern: number[]) {
   if (typeof navigator === "undefined") return;
 
-  /* Android + browsers with native support */
-  if ("vibrate" in navigator) {
-    try {
-      navigator.vibrate(pattern);
-      return;
-    } catch {
-      /* ignore */
-    }
+  const isIOS =
+    typeof window !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+    !("MSStream" in window);
+
+  if (isIOS) {
+    /* iOS — use the checkbox trick (fires once per click) */
+    triggerIosHaptic();
+    return;
   }
 
-  /* iOS fallback */
-  triggerIosHaptic();
+  /* Android + others — navigator.vibrate() */
+  if ("vibrate" in navigator) {
+    try {
+      const accepted = navigator.vibrate(pattern);
+      /* Log for debugging */
+      if (process.env.NODE_ENV === "development") {
+        console.log("[haptic] vibrate", pattern, "accepted:", accepted);
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[haptic] vibrate failed:", err);
+      }
+    }
+  }
 }
 
 /* ── Audio ── */
@@ -113,24 +130,18 @@ function playTone({
 }) {
   const ctx = getAudioCtx();
   if (!ctx) return;
-
   try {
     if (ctx.state === "suspended") ctx.resume();
-
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-
     osc.type = type;
     osc.frequency.value = freq;
-
     const now = ctx.currentTime;
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(volume, now + 0.005);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
     osc.connect(gain);
     gain.connect(ctx.destination);
-
     osc.start(now);
     osc.stop(now + duration + 0.02);
   } catch {
@@ -176,8 +187,13 @@ function isSoundEnabled(): boolean {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   PUBLIC API
+   ═══════════════════════════════════════════════════════════ */
 export function triggerSensory(kind: SensoryKind) {
+  /* Haptic first — MUST be synchronous within user gesture */
   vibrate(HAPTIC[kind]);
+  /* Sound second */
   if (isSoundEnabled()) {
     SOUND[kind]();
   }
@@ -192,6 +208,9 @@ export function dispatchSensoryResult(kind: "success" | "error") {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   SELECTORS
+   ═══════════════════════════════════════════════════════════ */
 const SNAP_SELECTOR = [
   ".btn-primary",
   ".button-primary",
@@ -225,15 +244,27 @@ const TAP_SELECTOR = [
   '[data-sensory="tap"]',
 ].join(",");
 
+/* ═══════════════════════════════════════════════════════════
+   COMPONENT — attaches listener on `touchstart` AND `pointerdown`
+   ------------------------------------------------------------
+   Using `touchstart` on touch devices is more reliable than
+   `pointerdown` because the gesture token is fresher and no
+   other pointer handler can interfere.
+   ═══════════════════════════════════════════════════════════ */
 export default function SensoryFeedback() {
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (reducedMotion) return;
 
-    const handlePointerDown = (e: PointerEvent) => {
+    const isTouch =
+      window.matchMedia("(hover: none)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+
+    const handleEvent = (e: Event) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
@@ -247,12 +278,18 @@ export default function SensoryFeedback() {
       if (kind) triggerSensory(kind);
     };
 
-    document.addEventListener("pointerdown", handlePointerDown, {
-      passive: true,
-    });
+    /*
+     * On touch devices, use `touchstart` — it's the most reliable
+     * gesture source for the Vibration API. Using `pointerdown`
+     * works too, but `touchstart` fires first and cannot be
+     * cancelled by other handlers.
+     */
+    const eventName = isTouch ? "touchstart" : "pointerdown";
+
+    document.addEventListener(eventName, handleEvent, { passive: true });
 
     return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener(eventName, handleEvent);
     };
   }, []);
 
