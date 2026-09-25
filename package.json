@@ -6,6 +6,14 @@
     "node": ">=20.0.0",
     "npm": ">=10"
   },
+  "browserslist": [
+    "chrome >= 115",
+    "edge >= 115",
+    "firefox >= 115",
+    "safari >= 16.4",
+    "ios_saf >= 16.4",
+    "not dead"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",

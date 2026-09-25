@@ -11,11 +11,11 @@
   inset: 0 0 auto;
   z-index: 100;
   padding-block: 14px;
-  transition: padding var(--duration-normal) var(--ease-out);
+  /* Performance: padding removed from transition to avoid layout thrashing */
 }
 
 .site-nav.is-scrolled {
-  padding-block: 8px;
+  /* Performance: no padding change — visual state handled on .nav-inner */
 }
 
 .nav-inner {
@@ -68,13 +68,20 @@
   transition:
     border-color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+}
+
+/* Performance-safe subtle shrink on scroll — composited transform only */
+.site-nav.is-scrolled .brand-mark {
+  transform: scale(0.92);
 }
 
 .brand:hover .brand-mark {
   border-color: var(--accent);
   background: var(--accent);
   color: #fff;
+  transform: scale(1.02);
 }
 
 .brand-text {
@@ -1106,4 +1113,29 @@
 .preview-editorial-block.accent {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   border-color: transparent;
+}
+
+/* ============================================================
+   PERFORMANCE OVERRIDE
+   ────────────────────────────────────────────────────────────
+   Neutralizes non-composited `padding`/`padding-block` animations
+   from enhancements.css and mobile-nav-v2.css that Lighthouse
+   flagged as layout thrashing. Only visual state (background,
+   border, shadow, transform) is animated now.
+   ============================================================ */
+.site-nav,
+.site-nav.is-scrolled {
+  padding-block: 14px !important;
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    opacity var(--duration-normal) var(--ease-out) !important;
+}
+
+.site-nav .nav-inner,
+.site-nav.is-scrolled .nav-inner {
+  padding-block: 0 !important;
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out) !important;
 }
