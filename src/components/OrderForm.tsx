@@ -5,13 +5,12 @@ import Link from "next/link";
 import { dispatchSensoryResult } from "@/components/SensoryFeedback";
 
 /* ═══════════════════════════════════════════════════════════
-   ORDER FORM — v3 · 2026 Redesign
+   ORDER FORM — v4 · 2026 Redesign
    ------------------------------------------------------------
-   - Mobile: 3-step wizard with sticky footer nav
-   - Desktop: single-page layout with all fields visible
-   - Clean validation, no positioning hacks
-   - Auto-save draft
-   - Full a11y
+   - Mobile: 3-step wizard, non-clickable progress indicators
+   - Desktop: single-page with 2-column grids
+   - User only advances via "Next" button
+   - Clean validation, auto-save draft, full a11y
    ═══════════════════════════════════════════════════════════ */
 
 type FormState = {
@@ -46,7 +45,7 @@ const INITIAL: FormState = {
   website: "",
 };
 
-const DRAFT_KEY = "oform-draft-v3";
+const DRAFT_KEY = "oform-draft-v4";
 const MAX_DESC = 5000;
 const NEAR_DESC = 4500;
 
@@ -89,9 +88,7 @@ const STEPS = [
 /* ─────────── Helpers ─────────── */
 
 function normalizeDigits(v: string): string {
-  return v.replace(/[۰-۹]/g, (d) =>
-    String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-  );
+  return v.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
 }
 
 function isValidPhone(v: string): boolean {
@@ -120,7 +117,15 @@ function isValidDescription(v: string): boolean {
 
 function CheckIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
@@ -128,7 +133,14 @@ function CheckIcon() {
 
 function XIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
@@ -137,7 +149,15 @@ function XIcon() {
 
 function ArrowLeft() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <line x1="19" y1="12" x2="5" y2="12" />
       <polyline points="12 19 5 12 12 5" />
     </svg>
@@ -146,7 +166,15 @@ function ArrowLeft() {
 
 function ArrowRight() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <line x1="5" y1="12" x2="19" y2="12" />
       <polyline points="12 5 19 12 12 19" />
     </svg>
@@ -160,7 +188,9 @@ function ArrowRight() {
 export default function OrderForm() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [touched, setTouched] = useState<Touched>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "success" | "error"
+  >("idle");
   const [step, setStep] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
@@ -171,7 +201,8 @@ export default function OrderForm() {
   /* ─── Detect mobile ─── */
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const check = () => setIsMobile(window.matchMedia("(max-width: 720px)").matches);
+    const check = () =>
+      setIsMobile(window.matchMedia("(max-width: 720px)").matches);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -206,17 +237,15 @@ export default function OrderForm() {
     }
   }, [form, status]);
 
-  /* ─── Compute field state ─── */
+  /* ─── Field state ─── */
   const fieldState = (field: keyof FormState): FieldState => {
     if (!touched[field]) return "idle";
     switch (field) {
       case "firstName":
+        return isValidName(form.firstName) ? "success" : "error";
       case "lastName":
-        return form[field].trim().length === 0 && field === "lastName"
-          ? "idle"
-          : isValidName(form[field])
-          ? "success"
-          : "error";
+        if (!form.lastName.trim()) return "idle";
+        return isValidName(form.lastName) ? "success" : "error";
       case "phone":
         return isValidPhone(form.phone) ? "success" : "error";
       case "email":
@@ -231,14 +260,22 @@ export default function OrderForm() {
     }
   };
 
-  /* ─── Step validation ─── */
+  /* ─── Step validity ─── */
   const isStepValid = (s: number): boolean => {
     if (s === 0) {
-      return isValidName(form.firstName) && isValidPhone(form.phone) && isValidEmail(form.email);
+      return (
+        isValidName(form.firstName) &&
+        isValidPhone(form.phone) &&
+        isValidEmail(form.email)
+      );
     }
     if (s === 1) {
       const bizOk = form.personalProject || isValidBusiness(form.businessName);
-      return bizOk && form.projectTypes.length > 0 && isValidDescription(form.description);
+      return (
+        bizOk &&
+        form.projectTypes.length > 0 &&
+        isValidDescription(form.description)
+      );
     }
     return !!form.contactPreference;
   };
@@ -262,7 +299,7 @@ export default function OrderForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
 
-  /* ─── Focus first input on step change (mobile) ─── */
+  /* ─── Focus first field on step change (mobile) ─── */
   useEffect(() => {
     if (!isMobile) return;
     const t = window.setTimeout(() => {
@@ -274,7 +311,7 @@ export default function OrderForm() {
     return () => window.clearTimeout(t);
   }, [step, isMobile]);
 
-  /* ─── Update field ─── */
+  /* ─── Update ─── */
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => {
     setForm((c) => ({ ...c, [k]: v }));
   };
@@ -296,15 +333,40 @@ export default function OrderForm() {
     setTouched((c) => ({ ...c, projectTypes: true }));
   };
 
-  /* ─── Step nav (mobile) ─── */
+  /* ─── Step nav — only forward via button ─── */
   const goNext = () => {
     if (!isStepValid(step)) {
-      /* Mark all step fields touched */
       if (step === 0) {
-        setTouched((c) => ({ ...c, firstName: true, phone: true, email: true }));
+        setTouched((c) => ({
+          ...c,
+          firstName: true,
+          phone: true,
+          email: true,
+        }));
       } else if (step === 1) {
-        setTouched((c) => ({ ...c, businessName: true, description: true, projectTypes: true }));
+        setTouched((c) => ({
+          ...c,
+          businessName: true,
+          description: true,
+          projectTypes: true,
+        }));
       }
+      /* Scroll to first error */
+      window.setTimeout(() => {
+        const errorEl = document.querySelector<HTMLElement>(
+          ".oform-field[data-state='error']"
+        );
+        if (errorEl) {
+          const rect = errorEl.getBoundingClientRect();
+          window.scrollTo({
+            top: window.scrollY + rect.top - 120,
+            behavior: "smooth",
+          });
+          errorEl.querySelector<HTMLElement>("input, textarea")?.focus({
+            preventScroll: true,
+          });
+        }
+      }, 60);
       return;
     }
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
@@ -336,32 +398,32 @@ export default function OrderForm() {
     });
 
     if (!isValidName(form.firstName)) {
-      setStep(0);
+      if (isMobile) setStep(0);
       setGlobalError("اسمت رو بنویس تا بدونم با کی صحبت می‌کنم.");
       return;
     }
     if (!isValidPhone(form.phone)) {
-      setStep(0);
+      if (isMobile) setStep(0);
       setGlobalError("شماره موبایل معتبر وارد کن.");
       return;
     }
     if (!isValidEmail(form.email)) {
-      setStep(0);
+      if (isMobile) setStep(0);
       setGlobalError("ایمیل معتبر وارد کن یا فیلد رو خالی بگذار.");
       return;
     }
     if (!form.personalProject && !isValidBusiness(form.businessName)) {
-      setStep(1);
+      if (isMobile) setStep(1);
       setGlobalError("نام کسب‌وکار رو بنویس یا «پروژه شخصی» رو تیک بزن.");
       return;
     }
     if (form.projectTypes.length === 0) {
-      setStep(1);
+      if (isMobile) setStep(1);
       setGlobalError("حداقل یک نوع پروژه انتخاب کن.");
       return;
     }
     if (!isValidDescription(form.description)) {
-      setStep(1);
+      if (isMobile) setStep(1);
       setGlobalError("چند خط درباره‌ی پروژه بنویس.");
       return;
     }
@@ -391,8 +453,7 @@ export default function OrderForm() {
       if (!res.ok) {
         setStatus("error");
         setGlobalError(
-          data.message ||
-            "ارسال نشد. یک بار دیگه امتحان کن."
+          data.message || "ارسال نشد. یک بار دیگه امتحان کن."
         );
         dispatchSensoryResult("error");
         return;
@@ -433,7 +494,7 @@ export default function OrderForm() {
   };
 
   /* ═══════════════════════════════════════════════════════
-     SUCCESS
+     SUCCESS STATE
      ═══════════════════════════════════════════════════════ */
   if (status === "success") {
     return (
@@ -445,7 +506,8 @@ export default function OrderForm() {
           <span className="oform-success-eyebrow">درخواست دریافت شد</span>
           <h2 className="oform-success-title">ممنون — پیامت رسید.</h2>
           <p className="oform-success-text">
-            حداکثر ۲۴ ساعت دیگه از طریق روشی که انتخاب کردی باهات تماس می‌گیرم.
+            حداکثر ۲۴ ساعت دیگه از طریق روشی که انتخاب کردی باهات تماس
+            می‌گیرم.
           </p>
           <div className="oform-success-actions">
             <Link href="/" className="oform-btn oform-btn--primary">
@@ -466,9 +528,8 @@ export default function OrderForm() {
   }
 
   /* ═══════════════════════════════════════════════════════
-     FIELD RENDERERS
+     FIELD RENDERER
      ═══════════════════════════════════════════════════════ */
-
   const renderField = (
     name: keyof FormState,
     label: string,
@@ -490,7 +551,11 @@ export default function OrderForm() {
       <div className="oform-field" data-state={state}>
         <label className="oform-label" htmlFor={`of-${name}`}>
           <span className="oform-label-text">{label}</span>
-          {opts.required && <span className="oform-req" aria-hidden="true">*</span>}
+          {opts.required && (
+            <span className="oform-req" aria-hidden="true">
+              *
+            </span>
+          )}
         </label>
         <div className="oform-input-wrap">
           <input
@@ -498,7 +563,9 @@ export default function OrderForm() {
             ref={name === "firstName" ? firstInputRef : undefined}
             type={opts.type || "text"}
             value={value}
-            onChange={(e) => set(name, e.target.value as FormState[typeof name])}
+            onChange={(e) =>
+              set(name, e.target.value as FormState[typeof name])
+            }
             onBlur={() => markTouched(name)}
             placeholder={opts.placeholder}
             dir={opts.dir || "rtl"}
@@ -525,52 +592,56 @@ export default function OrderForm() {
   /* ═══════════════════════════════════════════════════════
      STEP CONTENT
      ═══════════════════════════════════════════════════════ */
-
   const renderStepContent = (stepIndex: number) => {
     if (stepIndex === 0) {
       return (
         <div className="oform-step-body">
-          {renderField("firstName", "نام", {
-            required: true,
-            placeholder: "علی",
-            autoComplete: "given-name",
-            inputMode: "text",
-            enterKeyHint: "next",
-            maxLength: 80,
-          })}
-          {renderField("lastName", "نام خانوادگی", {
-            placeholder: "رضایی",
-            autoComplete: "family-name",
-            inputMode: "text",
-            enterKeyHint: "next",
-            maxLength: 80,
-          })}
-          {renderField("phone", "شماره موبایل", {
-            required: true,
-            type: "tel",
-            placeholder: "۰۹۱۲ ۳۴۵ ۶۷۸۹",
-            dir: "ltr",
-            inputMode: "tel",
-            autoComplete: "tel",
-            enterKeyHint: "next",
-            maxLength: 40,
-          })}
-          {renderField("email", "ایمیل", {
-            type: "email",
-            placeholder: "you@example.com",
-            dir: "ltr",
-            inputMode: "email",
-            autoComplete: "email",
-            enterKeyHint: "next",
-            maxLength: 160,
-            optionalHint: "اختیاری — اگر ترجیح می‌دی از این راه جواب بگیری.",
-          })}
+          <div className="oform-fields-2">
+            {renderField("firstName", "نام", {
+              required: true,
+              placeholder: "علی",
+              autoComplete: "given-name",
+              inputMode: "text",
+              enterKeyHint: "next",
+              maxLength: 80,
+            })}
+            {renderField("lastName", "نام خانوادگی", {
+              placeholder: "رضایی",
+              autoComplete: "family-name",
+              inputMode: "text",
+              enterKeyHint: "next",
+              maxLength: 80,
+            })}
+            {renderField("phone", "شماره موبایل", {
+              required: true,
+              type: "tel",
+              placeholder: "۰۹۱۲ ۳۴۵ ۶۷۸۹",
+              dir: "ltr",
+              inputMode: "tel",
+              autoComplete: "tel",
+              enterKeyHint: "next",
+              maxLength: 40,
+            })}
+            {renderField("email", "ایمیل", {
+              type: "email",
+              placeholder: "you@example.com",
+              dir: "ltr",
+              inputMode: "email",
+              autoComplete: "email",
+              enterKeyHint: "next",
+              maxLength: 160,
+              optionalHint:
+                "اختیاری — اگر ترجیح می‌دی از این راه جواب بگیری.",
+            })}
+          </div>
         </div>
       );
     }
 
     if (stepIndex === 1) {
-      const bizState = form.personalProject ? "idle" : fieldState("businessName");
+      const bizState = form.personalProject
+        ? "idle"
+        : fieldState("businessName");
       const descState = fieldState("description");
       const descLen = form.description.length;
       const counterClass =
@@ -586,7 +657,9 @@ export default function OrderForm() {
             <label className="oform-label" htmlFor="of-businessName">
               <span className="oform-label-text">نام کسب‌وکار</span>
               {!form.personalProject && (
-                <span className="oform-req" aria-hidden="true">*</span>
+                <span className="oform-req" aria-hidden="true">
+                  *
+                </span>
               )}
             </label>
             <div className="oform-input-wrap">
@@ -626,8 +699,12 @@ export default function OrderForm() {
 
           <fieldset className="oform-fieldset">
             <legend className="oform-label">
-              <span className="oform-label-text">چه نوع پروژه‌ای داری؟</span>
-              <span className="oform-req" aria-hidden="true">*</span>
+              <span className="oform-label-text">
+                چه نوع پروژه‌ای داری؟
+              </span>
+              <span className="oform-req" aria-hidden="true">
+                *
+              </span>
             </legend>
             <p className="oform-hint">می‌تونی چند تا رو با هم انتخاب کنی.</p>
             <div className="oform-options">
@@ -656,7 +733,9 @@ export default function OrderForm() {
           <div className="oform-field" data-state={descState}>
             <label className="oform-label" htmlFor="of-description">
               <span className="oform-label-text">توضیحات پروژه</span>
-              <span className="oform-req" aria-hidden="true">*</span>
+              <span className="oform-req" aria-hidden="true">
+                *
+              </span>
             </label>
             <div className="oform-input-wrap">
               <textarea
@@ -670,7 +749,10 @@ export default function OrderForm() {
                 aria-invalid={descState === "error"}
               />
               {descState !== "idle" && (
-                <span className="oform-icon oform-icon--top" aria-hidden="true">
+                <span
+                  className="oform-icon oform-icon--top"
+                  aria-hidden="true"
+                >
                   {descState === "success" ? <CheckIcon /> : <XIcon />}
                 </span>
               )}
@@ -691,7 +773,7 @@ export default function OrderForm() {
       );
     }
 
-    /* Step 2 — contact method */
+    /* Step 3 — contact method */
     return (
       <div className="oform-step-body">
         <fieldset className="oform-fieldset">
@@ -716,7 +798,10 @@ export default function OrderForm() {
                     checked={active}
                     onChange={() => set("contactPreference", m.value)}
                   />
-                  <span className="oform-contact-radio" aria-hidden="true" />
+                  <span
+                    className="oform-contact-radio"
+                    aria-hidden="true"
+                  />
                   <span className="oform-contact-label">{m.label}</span>
                 </label>
               );
@@ -725,15 +810,31 @@ export default function OrderForm() {
         </fieldset>
 
         <div className="oform-summary" aria-hidden="true">
-          <span className="oform-summary-title">خلاصه</span>
+          <span className="oform-summary-title">خلاصه‌ی درخواست</span>
           <ul className="oform-summary-list">
             <li>
               <span>نام</span>
-              <strong>{form.firstName || "—"}</strong>
+              <strong>
+                {form.firstName} {form.lastName}
+              </strong>
             </li>
             <li>
               <span>موبایل</span>
-              <strong dir="ltr">{form.phone || "—"}</strong>
+              <strong dir="ltr">{form.phone}</strong>
+            </li>
+            {form.email && (
+              <li>
+                <span>ایمیل</span>
+                <strong dir="ltr">{form.email}</strong>
+              </li>
+            )}
+            <li>
+              <span>کسب‌وکار</span>
+              <strong>
+                {form.personalProject
+                  ? "پروژه‌ی شخصی"
+                  : form.businessName}
+              </strong>
             </li>
             <li>
               <span>نوع پروژه</span>
@@ -752,8 +853,6 @@ export default function OrderForm() {
   /* ═══════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════ */
-
-  const currentStepValid = isStepValid(step);
   const isLast = step === STEPS.length - 1;
 
   return (
@@ -773,22 +872,25 @@ export default function OrderForm() {
         </div>
 
         {isMobile ? (
-          <div className="oform-progress-steps" role="tablist">
+          <div
+            className="oform-progress-steps"
+            role="list"
+            aria-label="مراحل فرم"
+          >
             {STEPS.map((s, i) => (
-              <button
+              <div
                 key={s.id}
-                type="button"
-                role="tab"
-                aria-selected={i === step}
-                aria-label={`مرحله ${i + 1}: ${s.title}`}
+                role="listitem"
                 className={`oform-step-pill${
                   i === step ? " is-active" : i < step ? " is-done" : ""
                 }`}
-                onClick={() => setStep(i)}
+                aria-current={i === step ? "step" : undefined}
               >
-                <span className="oform-step-pill-num">{s.num}</span>
+                <span className="oform-step-pill-num">
+                  {i < step ? "✓" : s.num}
+                </span>
                 <span className="oform-step-pill-title">{s.title}</span>
-              </button>
+              </div>
             ))}
           </div>
         ) : (
@@ -884,6 +986,7 @@ export default function OrderForm() {
               type="button"
               className="oform-btn oform-btn--ghost"
               onClick={goPrev}
+              aria-label="مرحله‌ی قبلی"
             >
               <ArrowRight />
               قبلی
@@ -896,7 +999,9 @@ export default function OrderForm() {
               className="oform-btn oform-btn--primary"
               disabled={status === "sending"}
             >
-              {status === "sending" ? "داره ارسال می‌شه..." : "ارسال درخواست"}
+              {status === "sending"
+                ? "داره ارسال می‌شه..."
+                : "ارسال درخواست"}
               <ArrowLeft />
             </button>
           ) : (
@@ -904,7 +1009,6 @@ export default function OrderForm() {
               type="button"
               className="oform-btn oform-btn--primary"
               onClick={goNext}
-              disabled={!currentStepValid && touched.firstName === true}
             >
               بعدی
               <ArrowLeft />
@@ -921,7 +1025,9 @@ export default function OrderForm() {
             className="oform-btn oform-btn--primary oform-btn--lg"
             disabled={status === "sending"}
           >
-            {status === "sending" ? "داره ارسال می‌شه..." : "ارسال درخواست"}
+            {status === "sending"
+              ? "داره ارسال می‌شه..."
+              : "ارسال درخواست"}
             <ArrowLeft />
           </button>
         </div>

@@ -1,12 +1,17 @@
 /* ============================================================
-   ORDER FORM v3 — 2026 Redesign
+   ORDER FORM v4 — 2026 Redesign
    ------------------------------------------------------------
-   Scoped under .oform — no conflicts with old CSS
+   Scoped under .oform — no conflicts with legacy CSS
+   - Non-clickable step indicators
+   - Desktop 2-column grids for short fields
+   - Mobile 3-step wizard
    ============================================================ */
 
-/* ─── Base ─── */
+/* ═══════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════ */
 .oform {
-  --f-field-h: 56px;
+  --f-field-h: 54px;
   --f-field-radius: 14px;
   --f-gap: 18px;
   --f-pad: 24px;
@@ -14,7 +19,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 720px;
+  max-width: 760px;
   margin-inline: auto;
   background: var(--surface);
   border: 1px solid var(--line);
@@ -36,11 +41,11 @@
    ═══════════════════════════════════════════════════════════ */
 .oform-progress {
   position: relative;
-  padding: 20px var(--f-pad) 18px;
+  padding: 22px var(--f-pad) 18px;
   background: linear-gradient(
     180deg,
     var(--paper-2) 0%,
-    color-mix(in srgb, var(--paper-2) 60%, var(--surface)) 100%
+    color-mix(in srgb, var(--paper-2) 55%, var(--surface)) 100%
   );
   border-bottom: 1px solid var(--line);
 }
@@ -50,7 +55,7 @@
   top: 0;
   inset-inline: 0;
   height: 3px;
-  background: color-mix(in srgb, var(--line-strong) 30%, transparent);
+  background: color-mix(in srgb, var(--line-strong) 25%, transparent);
   overflow: hidden;
 }
 
@@ -71,7 +76,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 1px;
-  padding: 4px 10px;
+  padding: 5px 11px;
   border-radius: 999px;
   background: var(--accent-tint);
   color: var(--accent);
@@ -93,13 +98,17 @@
   color: var(--ink-3-strong);
 }
 
-/* ─── Mobile step pills ─── */
+/* ═══════════════════════════════════════════════════════════
+   STEP PILLS (mobile only) — NON-CLICKABLE
+   ═══════════════════════════════════════════════════════════ */
 .oform-progress-steps {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  pointer-events: none; /* disable all interactions */
+  user-select: none;
 }
 
 .oform-progress-steps::-webkit-scrollbar {
@@ -110,42 +119,59 @@
   flex: 1 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 7px;
+  padding: 7px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface);
   color: var(--ink-3);
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 250ms cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
+  transition:
+    background-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .oform-step-pill-num {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--line-strong) 20%, transparent);
+  color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  opacity: 0.7;
+  line-height: 1;
+  transition:
+    background-color 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .oform-step-pill.is-done {
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
-  color: color-mix(in srgb, var(--accent) 80%, var(--ink-2));
+  border-color: color-mix(in srgb, var(--accent) 25%, var(--line));
+  color: color-mix(in srgb, var(--accent) 70%, var(--ink-2));
+}
+
+.oform-step-pill.is-done .oform-step-pill-num {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
 }
 
 .oform-step-pill.is-active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-  box-shadow: 0 4px 16px -6px var(--accent-glow);
+  box-shadow: 0 4px 14px -6px var(--accent-glow);
 }
 
 .oform-step-pill.is-active .oform-step-pill-num {
-  opacity: 1;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -258,11 +284,23 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STEP CONTENT
+   STEP BODY
    ═══════════════════════════════════════════════════════════ */
 .oform-step-body {
   display: grid;
   gap: var(--f-gap);
+}
+
+/* 2-column grid for short fields */
+.oform-fields-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--f-gap);
+}
+
+/* Fields that shouldn't stretch in the 2-column grid */
+.oform-fields-2 .oform-field {
+  min-width: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -271,6 +309,7 @@
 .oform-field {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .oform-label {
@@ -420,18 +459,34 @@
 }
 
 @keyframes oformIconIn {
-  0% { opacity: 0; transform: translateY(-50%) scale(0.4); }
-  60% { opacity: 1; transform: translateY(-50%) scale(1.15); }
-  100% { opacity: 1; transform: translateY(-50%) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
 }
 
 @keyframes oformShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
-/* ─── Hints / Meta ─── */
+/* ─── Hints ─── */
 .oform-hint {
   margin: 0;
   font-size: 12px;
@@ -455,8 +510,13 @@
   color: var(--ink-3);
 }
 
-.oform-counter.is-near { color: var(--accent); }
-.oform-counter.is-over { color: var(--danger); }
+.oform-counter.is-near {
+  color: var(--accent);
+}
+
+.oform-counter.is-over {
+  color: var(--danger);
+}
 
 /* ═══════════════════════════════════════════════════════════
    CHECKBOX
@@ -546,7 +606,7 @@
 
 .oform-options {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -556,13 +616,14 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  min-height: 52px;
+  min-height: 50px;
   border: 1.5px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-tap-highlight-color: transparent;
+  min-width: 0;
 }
 
 .oform-option input {
@@ -635,7 +696,7 @@
    ═══════════════════════════════════════════════════════════ */
 .oform-contacts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -718,7 +779,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SUMMARY (mobile step 3)
+   SUMMARY
    ═══════════════════════════════════════════════════════════ */
 .oform-summary {
   margin-top: 4px;
@@ -757,12 +818,15 @@
 
 .oform-summary-list span {
   color: var(--ink-3);
+  flex-shrink: 0;
 }
 
 .oform-summary-list strong {
   font-weight: 700;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+  text-align: end;
+  word-break: break-word;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -801,8 +865,14 @@
 }
 
 @keyframes oformErrorIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -967,8 +1037,7 @@
   border-radius: 50%;
   background: var(--accent-tint);
   color: var(--accent);
-  box-shadow:
-    0 0 0 8px color-mix(in srgb, var(--accent) 6%, transparent);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 6%, transparent);
   animation: oformSuccessPop 700ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
@@ -979,9 +1048,18 @@
 }
 
 @keyframes oformSuccessPop {
-  0% { transform: scale(0.5) rotate(-15deg); opacity: 0; }
-  60% { transform: scale(1.1) rotate(3deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0); opacity: 1; }
+  0% {
+    transform: scale(0.5) rotate(-15deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
 }
 
 .oform-success-eyebrow {
@@ -1028,23 +1106,26 @@
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 
-/* ─── Tablet (721-900) ─── */
+/* ─── Tablet ─── */
 @media (min-width: 721px) and (max-width: 900px) {
   .oform {
-    --f-pad: 26px;
+    --f-pad: 28px;
     --f-gap: 20px;
+    max-width: 100%;
+    margin-inline: 16px;
   }
+
   .oform-options {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* ─── Desktop (>900) ─── */
+/* ─── Desktop ─── */
 @media (min-width: 901px) {
   .oform {
     --f-pad: 40px;
     --f-gap: 22px;
-    max-width: 760px;
+    max-width: 780px;
     border-radius: 28px;
   }
 
@@ -1071,23 +1152,32 @@
   }
 
   .oform-options {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .oform-actions {
     padding: 24px var(--f-pad);
   }
+
+  /* At desktop, the last section is "روش تماس" — make it look distinct */
+  .oform-section:last-child {
+    background: linear-gradient(
+      180deg,
+      var(--surface) 0%,
+      color-mix(in srgb, var(--paper-2) 40%, var(--surface)) 100%
+    );
+  }
 }
 
-/* ─── Mobile (<720) ─── */
+/* ─── Mobile ─── */
 @media (max-width: 720px) {
   .oform {
-    --f-pad: 20px;
+    --f-pad: 18px;
     --f-gap: 16px;
     --f-field-h: 54px;
     max-width: 100%;
-    border-radius: 20px;
     margin-inline: 0;
+    border-radius: 18px;
   }
 
   .oform-progress {
@@ -1117,13 +1207,19 @@
     font-size: 13px;
   }
 
+  /* Fields single-column on mobile */
+  .oform-fields-2 {
+    grid-template-columns: 1fr;
+    gap: var(--f-gap);
+  }
+
   .oform-label {
     font-size: 12.5px;
   }
 
   .oform-input-wrap input,
   .oform-input-wrap textarea {
-    font-size: 16px; /* prevents iOS zoom */
+    font-size: 16px;
     border-radius: 12px;
   }
 
@@ -1167,7 +1263,7 @@
   }
 
   .oform-actions {
-    padding: 16px var(--f-pad);
+    padding: 14px var(--f-pad);
   }
 
   .oform-btn {
@@ -1177,11 +1273,19 @@
   }
 
   .oform-btn--ghost {
-    flex: 0 0 108px;
+    flex: 0 0 100px;
   }
 
   .oform-summary {
     padding: 14px 16px;
+  }
+
+  .oform-summary-list {
+    gap: 6px;
+  }
+
+  .oform-summary-list li {
+    font-size: 13px;
   }
 
   .oform-success-card {
@@ -1208,10 +1312,10 @@
   }
 }
 
-/* ─── Small mobile (<400) ─── */
+/* ─── Small mobile ─── */
 @media (max-width: 400px) {
   .oform {
-    --f-pad: 16px;
+    --f-pad: 14px;
     --f-gap: 14px;
   }
 
@@ -1225,7 +1329,18 @@
   }
 
   .oform-btn--ghost {
-    flex: 0 0 92px;
+    flex: 0 0 88px;
+  }
+
+  .oform-step-pill {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .oform-step-pill-num {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
   }
 }
 
@@ -1242,7 +1357,8 @@
   }
 
   .oform-btn,
-  .oform-progress-fill {
+  .oform-progress-fill,
+  .oform-step-pill {
     transition: none !important;
   }
 }
