@@ -52,7 +52,6 @@ const DESCRIPTION_NEAR_LIMIT = 4500;
 
 type ErrorField = keyof FormState | "projectTypes" | null;
 
-/* ── Field validators ── */
 const validators: Partial<Record<keyof FormState, (v: string) => boolean>> = {
   firstName: (v) => v.trim().length >= 2,
   phone: (v) => v.trim().length >= 10,
@@ -63,9 +62,7 @@ const validators: Partial<Record<keyof FormState, (v: string) => boolean>> = {
 
 export default function OrderForm() {
   const [form, setForm] = useState<FormState>(initialForm);
-  const [status, setStatus] = useState<
-    "idle" | "sending" | "success" | "error"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [errorField, setErrorField] = useState<ErrorField>(null);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -76,21 +73,14 @@ export default function OrderForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const submitRowRef = useRef<HTMLDivElement>(null);
 
-  /* ═══════════════════════════════════════════════════════════
-     Detect mobile viewport
-     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const check = () =>
-      setIsMobile(window.matchMedia("(max-width: 720px)").matches);
+    const check = () => setIsMobile(window.matchMedia("(max-width: 720px)").matches);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* ═══════════════════════════════════════════════════════════
-     Load draft from localStorage
-     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DRAFT_KEY);
@@ -99,14 +89,9 @@ export default function OrderForm() {
         setForm({ ...initialForm, ...parsed });
         setHasDraft(true);
       }
-    } catch {
-      /* ignore */
-    }
+    } catch { /* ignore */ }
   }, []);
 
-  /* ═══════════════════════════════════════════════════════════
-     Auto-save draft
-     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
     if (status !== "idle") return;
     try {
@@ -117,22 +102,14 @@ export default function OrderForm() {
         if (key === "website") return false;
         return typeof value === "string" && value.trim() !== "";
       });
-      if (hasContent) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
-      }
-    } catch {
-      /* ignore */
-    }
+      if (hasContent) localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    } catch { /* ignore */ }
   }, [form, status]);
 
-  /* ═══════════════════════════════════════════════════════════
-     Sticky submit visibility
-     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
     if (!isMobile) return;
     const target = submitRowRef.current;
     if (!target) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => setShowStickySubmit(!entry.isIntersecting),
       { rootMargin: "0px 0px -20% 0px", threshold: 0 }
@@ -141,58 +118,33 @@ export default function OrderForm() {
     return () => observer.disconnect();
   }, [isMobile]);
 
-  /* ═══════════════════════════════════════════════════════════
-     Clear error when user types
-     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
-    if (errorMessage) {
-      setErrorMessage("");
-      setErrorField(null);
-    }
+    if (errorMessage) { setErrorMessage(""); setErrorField(null); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
 
-  /* ═══════════════════════════════════════════════════════════
-     Progress calculation
-     ═══════════════════════════════════════════════════════════ */
   const progress = useMemo(() => {
     let filled = 0;
     const total = 6;
-
     if (form.firstName.trim().length >= 2) filled += 1;
     if (form.phone.trim().length >= 10) filled += 1;
-    if (form.personalProject || form.businessName.trim().length >= 2)
-      filled += 1;
+    if (form.personalProject || form.businessName.trim().length >= 2) filled += 1;
     if (form.projectTypes.length > 0) filled += 1;
     if (form.description.trim().length >= 20) filled += 1;
     if (form.contactPreference) filled += 1;
-
     return Math.round((filled / total) * 100);
   }, [form]);
 
-  /* ═══════════════════════════════════════════════════════════
-     Field state for inline validation
-     ═══════════════════════════════════════════════════════════ */
-  const getFieldState = (
-    field: keyof FormState
-  ): "idle" | "success" | "error" => {
+  const getFieldState = (field: keyof FormState): "idle" | "success" | "error" => {
     if (!touched[field]) return "idle";
     const validator = validators[field];
     if (!validator) return "idle";
     return validator(form[field] as string) ? "success" : "error";
   };
 
-  const markTouched = (field: string) => {
-    setTouched((current) => ({ ...current, [field]: true }));
-  };
+  const markTouched = (field: string) => setTouched((c) => ({ ...c, [field]: true }));
 
-  /* ═══════════════════════════════════════════════════════════
-     Field updates
-     ═══════════════════════════════════════════════════════════ */
-  const updateField = <K extends keyof FormState>(
-    field: K,
-    value: FormState[K]
-  ) => {
+  const updateField = <K extends keyof FormState>(field: K, value: FormState[K]) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
@@ -202,23 +154,18 @@ export default function OrderForm() {
       return {
         ...current,
         projectTypes: exists
-          ? current.projectTypes.filter((item) => item !== value)
+          ? current.projectTypes.filter((i) => i !== value)
           : [...current.projectTypes, value],
       };
     });
   };
 
-  /* ═══════════════════════════════════════════════════════════
-     Scroll to error field
-     ═══════════════════════════════════════════════════════════ */
   const scrollToError = (field: ErrorField) => {
     if (!field) return;
     window.setTimeout(() => {
       const formEl = formRef.current;
       if (!formEl) return;
-      const el = formEl.querySelector<HTMLElement>(
-        `[data-field="${field}"]`
-      );
+      const el = formEl.querySelector<HTMLElement>(`[data-field="${field}"]`);
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const absoluteTop = window.scrollY + rect.top - 120;
@@ -238,75 +185,39 @@ export default function OrderForm() {
     scrollToError(field);
   };
 
-  /* ═══════════════════════════════════════════════════════════
-     Submit handler
-     ═══════════════════════════════════════════════════════════ */
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === "sending") return;
-
     setErrorMessage("");
     setErrorField(null);
+    setTouched({ firstName: true, phone: true, businessName: true, description: true });
 
-    /* Mark all required fields as touched */
-    setTouched({
-      firstName: true,
-      phone: true,
-      businessName: true,
-      description: true,
-    });
-
-    /* Honeypot — silent success */
     if (form.website.trim()) {
       setStatus("success");
       setForm(initialForm);
-      try {
-        localStorage.removeItem(DRAFT_KEY);
-      } catch {
-        /* ignore */
-      }
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       dispatchSensoryResult("success");
       return;
     }
 
-    /* Validation */
     if (!validators.firstName!(form.firstName)) {
-      showError(
-        "اسمت رو بنویس تا بدونم با کی صحبت می‌کنم.",
-        "firstName"
-      );
+      showError("اسمت رو بنویس تا بدونم با کی صحبت می‌کنم.", "firstName");
       return;
     }
-
     if (!validators.phone!(form.phone)) {
-      showError(
-        "شماره موبایل لازمه تا بتونم باهات تماس بگیرم.",
-        "phone"
-      );
+      showError("شماره موبایل لازمه تا بتونم باهات تماس بگیرم.", "phone");
       return;
     }
-
-    if (
-      !form.personalProject &&
-      !validators.businessName!(form.businessName)
-    ) {
-      showError(
-        "نام کسب‌وکار رو بنویس، یا گزینه‌ی «پروژه شخصی» رو تیک بزن.",
-        "businessName"
-      );
+    if (!form.personalProject && !validators.businessName!(form.businessName)) {
+      showError("نام کسب‌وکار رو بنویس، یا گزینه‌ی «پروژه شخصی» رو تیک بزن.", "businessName");
       return;
     }
-
     if (form.projectTypes.length === 0) {
       showError("حداقل یک نوع پروژه رو انتخاب کن.", "projectTypes");
       return;
     }
-
     if (!validators.description!(form.description)) {
-      showError(
-        "چند خط درباره‌ی پروژه بنویس — حتی خلاصه و بدون جزئیات.",
-        "description"
-      );
+      showError("چند خط درباره‌ی پروژه بنویس — حتی خلاصه و بدون جزئیات.", "description");
       return;
     }
 
@@ -334,15 +245,9 @@ export default function OrderForm() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          setErrorMessage(
-            data.message ||
-              "کمی زیادی سریع فرستادی. چند دقیقه دیگه دوباره تلاش کن."
-          );
+          setErrorMessage(data.message || "کمی زیادی سریع فرستادی. چند دقیقه دیگه دوباره تلاش کن.");
         } else {
-          setErrorMessage(
-            data.message ||
-              "ارسال نشد. یک بار دیگه امتحان کن، اگر باز هم نشد بهم پیام بده."
-          );
+          setErrorMessage(data.message || "ارسال نشد. یک بار دیگه امتحان کن، اگر باز هم نشد بهم پیام بده.");
         }
         setStatus("error");
         dispatchSensoryResult("error");
@@ -353,62 +258,39 @@ export default function OrderForm() {
       setForm(initialForm);
       setTouched({});
       setHasDraft(false);
-      try {
-        localStorage.removeItem(DRAFT_KEY);
-      } catch {
-        /* ignore */
-      }
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       dispatchSensoryResult("success");
     } catch (error) {
       console.error("Order form error:", error);
       setStatus("error");
-      setErrorMessage(
-        "اتصال برقرار نشد. اینترنتت رو چک کن یا یک بار دیگه امتحان کن."
-      );
+      setErrorMessage("اتصال برقرار نشد. اینترنتت رو چک کن یا یک بار دیگه امتحان کن.");
       dispatchSensoryResult("error");
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════
-     Clear draft
-     ═══════════════════════════════════════════════════════════ */
   const clearDraft = () => {
     setForm(initialForm);
     setTouched({});
     setHasDraft(false);
-    try {
-      localStorage.removeItem(DRAFT_KEY);
-    } catch {
-      /* ignore */
-    }
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
   };
 
-  /* ═══════════════════════════════════════════════════════════
-     SUCCESS STATE
-     ═══════════════════════════════════════════════════════════ */
   if (status === "success") {
     return (
       <div className="order-success" role="status">
-        <div className="order-success-icon" aria-hidden="true">
-          ✓
-        </div>
-
+        <div className="order-success-icon" aria-hidden="true">✓</div>
         <span className="eyebrow">درخواست دریافت شد</span>
-
         <h2>ممنون — پیامت به دستم رسید.</h2>
-
         <p>
           حداکثر ۲۴ ساعت دیگه از طریق روشی که انتخاب کردی باهات
           تماس می‌گیرم. اگر تا اون موقع سؤالی داشتی، می‌تونی از فرم
           زیر دوباره پیام بفرستی.
         </p>
-
         <div className="order-success-actions">
           <Link href="/" className="button button-primary">
             بازگشت به صفحه اصلی
             <span aria-hidden="true">←</span>
           </Link>
-
           <button
             type="button"
             className="button button-secondary"
@@ -426,44 +308,28 @@ export default function OrderForm() {
     );
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     FORM
-     ═══════════════════════════════════════════════════════════ */
   const descLength = form.description.length;
-  const counterClass =
-    descLength > DESCRIPTION_MAX
-      ? "is-over-limit"
-      : descLength > DESCRIPTION_NEAR_LIMIT
-      ? "is-near-limit"
-      : "";
+  const counterClass = descLength > DESCRIPTION_MAX
+    ? "is-over-limit"
+    : descLength > DESCRIPTION_NEAR_LIMIT
+    ? "is-near-limit"
+    : "";
 
   return (
     <>
-      <form
-        ref={formRef}
-        className="order-form"
-        onSubmit={handleSubmit}
-        noValidate
-      >
+      <form ref={formRef} className="order-form" onSubmit={handleSubmit} noValidate>
         <FormProgress progress={progress} />
 
         {hasDraft && (
           <div className="order-draft-notice" role="status">
-            <span className="order-draft-notice-text">
-              پیش‌نویس قبلی بازیابی شد
-            </span>
-            <button
-              type="button"
-              className="order-draft-clear"
-              onClick={clearDraft}
-              aria-label="پاک کردن پیش‌نویس"
-            >
+            <span className="order-draft-notice-text">پیش‌نویس قبلی بازیابی شد</span>
+            <button type="button" className="order-draft-clear" onClick={clearDraft} aria-label="پاک کردن پیش‌نویس">
               پاک کن
             </button>
           </div>
         )}
 
-        {/* ═══════ Section 01 — Contact ═══════ */}
+        {/* Section 01 */}
         <div className="form-section">
           <div className="form-section-heading">
             <span>01</span>
@@ -474,14 +340,8 @@ export default function OrderForm() {
           </div>
 
           <div className="form-grid">
-            <label
-              className="form-field"
-              data-field="firstName"
-              data-state={getFieldState("firstName")}
-            >
-              <span>
-                نام <b aria-hidden="true">*</b>
-              </span>
+            <label className="form-field" data-field="firstName" data-state={getFieldState("firstName")}>
+              <span>نام <b aria-hidden="true">*</b></span>
               <input
                 type="text"
                 value={form.firstName}
@@ -494,6 +354,20 @@ export default function OrderForm() {
                 placeholder="علی"
                 aria-invalid={errorField === "firstName"}
               />
+              {getFieldState("firstName") !== "idle" && (
+                <span className="form-field-icon" aria-hidden="true">
+                  {getFieldState("firstName") === "success" ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  )}
+                </span>
+              )}
             </label>
 
             <label className="form-field" data-field="lastName">
@@ -510,14 +384,8 @@ export default function OrderForm() {
               />
             </label>
 
-            <label
-              className="form-field"
-              data-field="phone"
-              data-state={getFieldState("phone")}
-            >
-              <span>
-                شماره موبایل <b aria-hidden="true">*</b>
-              </span>
+            <label className="form-field" data-field="phone" data-state={getFieldState("phone")}>
+              <span>شماره موبایل <b aria-hidden="true">*</b></span>
               <input
                 type="tel"
                 value={form.phone}
@@ -531,13 +399,23 @@ export default function OrderForm() {
                 dir="ltr"
                 aria-invalid={errorField === "phone"}
               />
+              {getFieldState("phone") !== "idle" && (
+                <span className="form-field-icon" aria-hidden="true">
+                  {getFieldState("phone") === "success" ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  )}
+                </span>
+              )}
             </label>
 
-            <label
-              className="form-field"
-              data-field="email"
-              data-state={getFieldState("email")}
-            >
+            <label className="form-field" data-field="email" data-state={getFieldState("email")}>
               <span>ایمیل</span>
               <input
                 type="email"
@@ -551,11 +429,25 @@ export default function OrderForm() {
                 placeholder="you@example.com"
                 dir="ltr"
               />
+              {getFieldState("email") !== "idle" && (
+                <span className="form-field-icon" aria-hidden="true">
+                  {getFieldState("email") === "success" ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  )}
+                </span>
+              )}
             </label>
           </div>
         </div>
 
-        {/* ═══════ Section 02 — Project ═══════ */}
+        {/* Section 02 */}
         <div className="form-section">
           <div className="form-section-heading">
             <span>02</span>
@@ -566,24 +458,13 @@ export default function OrderForm() {
           </div>
 
           <div className="form-grid">
-            <label
-              className="form-field form-field-full"
-              data-field="businessName"
-              data-state={
-                form.personalProject
-                  ? "idle"
-                  : getFieldState("businessName")
-              }
-            >
-              <span>
-                نام کسب‌وکار <b aria-hidden="true">*</b>
-              </span>
+            <label className="form-field form-field-full" data-field="businessName"
+              data-state={form.personalProject ? "idle" : getFieldState("businessName")}>
+              <span>نام کسب‌وکار <b aria-hidden="true">*</b></span>
               <input
                 type="text"
                 value={form.businessName}
-                onChange={(e) =>
-                  updateField("businessName", e.target.value)
-                }
+                onChange={(e) => updateField("businessName", e.target.value)}
                 onBlur={() => markTouched("businessName")}
                 disabled={form.personalProject}
                 autoComplete="organization"
@@ -593,68 +474,54 @@ export default function OrderForm() {
                 placeholder="مثلاً: کافه نیلا، آموزشگاه ویرا، ..."
                 aria-invalid={errorField === "businessName"}
               />
+              {!form.personalProject && getFieldState("businessName") !== "idle" && (
+                <span className="form-field-icon" aria-hidden="true">
+                  {getFieldState("businessName") === "success" ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  )}
+                </span>
+              )}
             </label>
 
             <label className="form-checkbox">
               <input
                 type="checkbox"
                 checked={form.personalProject}
-                onChange={(e) =>
-                  updateField("personalProject", e.target.checked)
-                }
+                onChange={(e) => updateField("personalProject", e.target.checked)}
               />
               <span>این یک پروژه‌ی شخصیه، نه کسب‌وکار</span>
             </label>
 
-            <fieldset
-              className="form-fieldset form-field-full"
-              data-field="projectTypes"
-              aria-invalid={errorField === "projectTypes"}
-            >
-              <legend>
-                چه نوع پروژه‌ای داری؟ <b aria-hidden="true">*</b>
-              </legend>
-              <p
-                className="field-hint"
-                style={{ marginBottom: "14px", marginTop: "-4px" }}
-              >
+            <fieldset className="form-fieldset form-field-full" data-field="projectTypes"
+              aria-invalid={errorField === "projectTypes"}>
+              <legend>چه نوع پروژه‌ای داری؟ <b aria-hidden="true">*</b></legend>
+              <p className="field-hint" style={{ marginBottom: "14px", marginTop: "-4px" }}>
                 می‌تونی چند تا رو با هم انتخاب کنی.
               </p>
-
               <div className="project-type-grid">
                 {projectTypes.map((type) => (
-                  <label
-                    key={type.value}
-                    className={`project-type-option ${
-                      form.projectTypes.includes(type.value)
-                        ? "is-selected"
-                        : ""
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={form.projectTypes.includes(type.value)}
-                      onChange={() => toggleProjectType(type.value)}
-                    />
+                  <label key={type.value}
+                    className={`project-type-option ${form.projectTypes.includes(type.value) ? "is-selected" : ""}`}>
+                    <input type="checkbox" checked={form.projectTypes.includes(type.value)}
+                      onChange={() => toggleProjectType(type.value)} />
                     <span>{type.label}</span>
                   </label>
                 ))}
               </div>
             </fieldset>
 
-            <label
-              className="form-field form-field-full"
-              data-field="description"
-              data-state={getFieldState("description")}
-            >
-              <span>
-                توضیحات پروژه <b aria-hidden="true">*</b>
-              </span>
+            <label className="form-field form-field-full" data-field="description" data-state={getFieldState("description")}>
+              <span>توضیحات پروژه <b aria-hidden="true">*</b></span>
               <textarea
                 value={form.description}
-                onChange={(e) =>
-                  updateField("description", e.target.value)
-                }
+                onChange={(e) => updateField("description", e.target.value)}
                 onBlur={() => markTouched("description")}
                 rows={7}
                 maxLength={DESCRIPTION_MAX}
@@ -662,23 +529,33 @@ export default function OrderForm() {
                 placeholder="مثلاً: می‌خوام یه فروشگاه آنلاین برای لباس زنانه بسازم. حدود ۵۰ محصول دارم، رنگ و سایز هم مهمه..."
                 aria-invalid={errorField === "description"}
               />
-              <span
-                className="field-hint"
-                style={{ marginTop: "8px" }}
-              >
+              {getFieldState("description") !== "idle" && (
+                <span className="form-field-icon" aria-hidden="true">
+                  {getFieldState("description") === "success" ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  )}
+                </span>
+              )}
+              <span className="field-hint" style={{ marginTop: "8px" }}>
                 حتی چند خط کافیه — لازم نیست کامل باشه.
               </span>
               {descLength > 0 && (
                 <span className={`form-field-counter ${counterClass}`}>
-                  {descLength.toLocaleString("fa-IR")} /{" "}
-                  {DESCRIPTION_MAX.toLocaleString("fa-IR")}
+                  {descLength.toLocaleString("fa-IR")} / {DESCRIPTION_MAX.toLocaleString("fa-IR")}
                 </span>
               )}
             </label>
           </div>
         </div>
 
-        {/* ═══════ Section 03 — Contact method ═══════ */}
+        {/* Section 03 */}
         <div className="form-section">
           <div className="form-section-heading">
             <span>03</span>
@@ -690,26 +567,13 @@ export default function OrderForm() {
 
           <fieldset className="form-fieldset">
             <legend>روش تماس ترجیحی</legend>
-
             <div className="contact-methods">
               {contactMethods.map((method) => (
-                <label
-                  key={method.value}
-                  className={`contact-method ${
-                    form.contactPreference === method.value
-                      ? "is-selected"
-                      : ""
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="contactPreference"
-                    value={method.value}
+                <label key={method.value}
+                  className={`contact-method ${form.contactPreference === method.value ? "is-selected" : ""}`}>
+                  <input type="radio" name="contactPreference" value={method.value}
                     checked={form.contactPreference === method.value}
-                    onChange={(e) =>
-                      updateField("contactPreference", e.target.value)
-                    }
-                  />
+                    onChange={(e) => updateField("contactPreference", e.target.value)} />
                   <span>{method.label}</span>
                 </label>
               ))}
@@ -717,62 +581,29 @@ export default function OrderForm() {
           </fieldset>
         </div>
 
-        {/* Honeypot */}
-        <input
-          type="text"
-          name="website"
-          value={form.website}
+        <input type="text" name="website" value={form.website}
           onChange={(e) => updateField("website", e.target.value)}
-          tabIndex={-1}
-          autoComplete="off"
-          aria-hidden="true"
-          className="form-honeypot"
-        />
+          tabIndex={-1} autoComplete="off" aria-hidden="true" className="form-honeypot" />
 
-        {/* Error message */}
         {errorMessage && (
-          <div className="form-message form-message-error" role="alert">
-            {errorMessage}
-          </div>
+          <div className="form-message form-message-error" role="alert">{errorMessage}</div>
         )}
 
-        {/* Submit row */}
         <div className="form-submit-row" ref={submitRowRef}>
           <p>بعد از ارسال، حداکثر ۲۴ ساعت دیگه جواب می‌گیری.</p>
-
-          <button
-            type="submit"
-            className="button button-primary"
-            disabled={status === "sending"}
-          >
-            {status === "sending"
-              ? "داره ارسال می‌شه..."
-              : "ارسال و شروع گفت‌وگو"}
+          <button type="submit" className="button button-primary" disabled={status === "sending"}>
+            {status === "sending" ? "داره ارسال می‌شه..." : "ارسال و شروع گفت‌وگو"}
             <span aria-hidden="true">←</span>
           </button>
         </div>
       </form>
 
-      {/* Mobile sticky submit */}
       {isMobile && showStickySubmit && (
-        <div
-          className="order-sticky-submit"
-          role="region"
-          aria-label="ارسال سریع"
-        >
-          <button
-            type="button"
-            className="button button-primary"
-            onClick={() => {
-              const formEl = formRef.current;
-              if (!formEl) return;
-              formEl.requestSubmit();
-            }}
-            disabled={status === "sending"}
-          >
-            {status === "sending"
-              ? "داره ارسال می‌شه..."
-              : "ارسال درخواست"}
+        <div className="order-sticky-submit" role="region" aria-label="ارسال سریع">
+          <button type="button" className="button button-primary"
+            onClick={() => { formRef.current?.requestSubmit(); }}
+            disabled={status === "sending"}>
+            {status === "sending" ? "داره ارسال می‌شه..." : "ارسال درخواست"}
             <span aria-hidden="true">←</span>
           </button>
         </div>

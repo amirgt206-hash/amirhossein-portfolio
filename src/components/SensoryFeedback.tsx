@@ -2,15 +2,6 @@
 
 import { useEffect } from "react";
 
-/* ═══════════════════════════════════════════════════════════
-   SENSORY FEEDBACK — Haptic + Sound (fixed)
-   ------------------------------------------------------------
-   - Listeners always attached (no conditional mount)
-   - Sound preference checked at runtime (not at mount)
-   - Haptic works on Android regardless of sound
-   - Sound toggle state read from localStorage on every tap
-   ═══════════════════════════════════════════════════════════ */
-
 export const SOUND_PREF_KEY = "sound-enabled";
 
 export type SensoryKind =
@@ -34,7 +25,64 @@ const HAPTIC: Record<SensoryKind, number | number[]> = {
   snap: 10,
 };
 
-/* ── Shared AudioContext ── */
+/* ═══════════════════════════════════════════════════════════
+   iOS HAPTIC — Taptic Engine via hidden checkbox
+   ------------------------------------------------------------
+   iOS Safari doesn't support navigator.vibrate().
+   But the "switch" checkbox (iOS 17.4-26.4) triggered haptic.
+   Apple patched it in 26.5+, but the fallback still helps on
+   older iOS versions. On Android, navigator.vibrate() works.
+   ═══════════════════════════════════════════════════════════ */
+
+let iosHapticInput: HTMLInputElement | null = null;
+
+function ensureIosHapticInput() {
+  if (typeof document === "undefined") return null;
+  if (iosHapticInput) return iosHapticInput;
+
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.setAttribute("switch", "");
+  input.style.position = "fixed";
+  input.style.opacity = "0";
+  input.style.pointerEvents = "none";
+  input.style.width = "1px";
+  input.style.height = "1px";
+  input.setAttribute("aria-hidden", "true");
+  input.tabIndex = -1;
+  document.body.appendChild(input);
+  iosHapticInput = input;
+  return input;
+}
+
+function triggerIosHaptic() {
+  const input = ensureIosHapticInput();
+  if (!input) return;
+  try {
+    input.click();
+  } catch {
+    /* ignore */
+  }
+}
+
+function vibrate(pattern: number | number[]) {
+  if (typeof navigator === "undefined") return;
+
+  /* Android + browsers with native support */
+  if ("vibrate" in navigator) {
+    try {
+      navigator.vibrate(pattern);
+      return;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  /* iOS fallback */
+  triggerIosHaptic();
+}
+
+/* ── Audio ── */
 let audioCtx: AudioContext | null = null;
 
 function getAudioCtx(): AudioContext | null {
@@ -67,9 +115,7 @@ function playTone({
   if (!ctx) return;
 
   try {
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
+    if (ctx.state === "suspended") ctx.resume();
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -107,12 +153,7 @@ const SOUND: Record<SensoryKind, () => void> = {
     );
   },
   error: () => {
-    playTone({
-      freq: 320,
-      duration: 0.12,
-      volume: 0.025,
-      type: "triangle",
-    });
+    playTone({ freq: 320, duration: 0.12, volume: 0.025, type: "triangle" });
     window.setTimeout(
       () =>
         playTone({
@@ -126,17 +167,6 @@ const SOUND: Record<SensoryKind, () => void> = {
   },
 };
 
-/* ── Helpers ── */
-function vibrate(pattern: number | number[]) {
-  if (typeof navigator === "undefined") return;
-  if (!("vibrate" in navigator)) return;
-  try {
-    navigator.vibrate(pattern);
-  } catch {
-    /* ignore */
-  }
-}
-
 function isSoundEnabled(): boolean {
   if (typeof window === "undefined") return false;
   try {
@@ -146,7 +176,6 @@ function isSoundEnabled(): boolean {
   }
 }
 
-/* ── Global trigger ── */
 export function triggerSensory(kind: SensoryKind) {
   vibrate(HAPTIC[kind]);
   if (isSoundEnabled()) {
@@ -163,7 +192,6 @@ export function dispatchSensoryResult(kind: "success" | "error") {
   }
 }
 
-/* ── Component ── */
 const SNAP_SELECTOR = [
   ".btn-primary",
   ".button-primary",
