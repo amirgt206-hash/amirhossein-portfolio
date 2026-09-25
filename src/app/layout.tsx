@@ -26,55 +26,52 @@ import "@/styles/mobile-touch.css";
 /* 7. Mobile modal */
 import "@/styles/mobile-modal.css";
 
-/* 8. Mobile forms */
-import "@/styles/mobile-forms.css";
-
-/* 9. Mobile typography */
+/* 8. Mobile typography */
 import "@/styles/mobile-typography.css";
 
-/* 10. Mobile nav v2 */
+/* 9. Mobile nav v2 */
 import "@/styles/mobile-nav-v2.css";
 
-/* 11. Perceived performance */
+/* 10. Perceived performance */
 import "@/styles/perceived-performance.css";
 
-/* 12. Adaptive navigation */
+/* 11. Adaptive navigation */
 import "@/styles/adaptive-navigation.css";
 
-/* 13. Form progress */
-import "@/styles/form-progress.css";
-
-/* 14. Sensory feedback */
+/* 12. Sensory feedback */
 import "@/styles/sensory.css";
 
-/* 15. Welcome onboarding */
+/* 13. Welcome onboarding */
 import "@/styles/welcome-onboarding.css";
 
-/* 16. Layout */
+/* 14. Order form v2 */
+import "@/styles/order-form-v2.css";
+
+/* 15. Layout */
 import "@/styles/layout.css";
 
-/* 17. Layout more */
+/* 16. Layout more */
 import "@/styles/layout-more.css";
 
-/* 18. Footer effects */
+/* 17. Footer effects */
 import "@/styles/footer-effects.css";
 
-/* 19. Pages */
+/* 18. Pages */
 import "@/styles/pages.css";
 
-/* 20. Responsive */
+/* 19. Responsive */
 import "@/styles/responsive.css";
 
-/* 21. Enhancements */
+/* 20. Enhancements */
 import "@/styles/enhancements.css";
 
-/* 22. Mobile fix */
+/* 21. Mobile fix */
 import "@/styles/mobile-fix.css";
 
-/* 23. Blog */
+/* 22. Blog */
 import "@/app/blog/blog.css";
 
-/* 24. Theme toggle */
+/* 23. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
