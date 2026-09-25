@@ -14,14 +14,6 @@ export type SensoryKind =
   | "swipe"
   | "snap";
 
-/* ═══════════════════════════════════════════════════════════
-   HAPTIC PATTERNS — Using arrays for wider compatibility
-   ------------------------------------------------------------
-   Single duration values < 1000ms are ignored on some Android
-   devices (Pixel 9, Android 16). Using array patterns with a
-   leading pause forces the motor to engage reliably.
-   ═══════════════════════════════════════════════════════════ */
-
 const HAPTIC: Record<SensoryKind, number[]> = {
   tap: [0, 30],
   select: [0, 40],
@@ -33,9 +25,7 @@ const HAPTIC: Record<SensoryKind, number[]> = {
   error: [0, 60, 80, 60],
 };
 
-/* ═══════════════════════════════════════════════════════════
-   iOS HAPTIC — Taptic Engine via hidden checkbox
-   ═══════════════════════════════════════════════════════════ */
+/* ── iOS Haptic via hidden checkbox ── */
 let iosHapticInput: HTMLInputElement | null = null;
 
 function ensureIosHapticInput() {
@@ -66,9 +56,6 @@ function triggerIosHaptic() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   VIBRATE — with platform detection and fallbacks
-   ═══════════════════════════════════════════════════════════ */
 function vibrate(pattern: number[]) {
   if (typeof navigator === "undefined") return;
 
@@ -78,23 +65,15 @@ function vibrate(pattern: number[]) {
     !("MSStream" in window);
 
   if (isIOS) {
-    /* iOS — use the checkbox trick (fires once per click) */
     triggerIosHaptic();
     return;
   }
 
-  /* Android + others — navigator.vibrate() */
   if ("vibrate" in navigator) {
     try {
-      const accepted = navigator.vibrate(pattern);
-      /* Log for debugging */
-      if (process.env.NODE_ENV === "development") {
-        console.log("[haptic] vibrate", pattern, "accepted:", accepted);
-      }
-    } catch (err) {
-      if (process.env.NODE_ENV === "development") {
-        console.warn("[haptic] vibrate failed:", err);
-      }
+      navigator.vibrate(pattern);
+    } catch {
+      /* ignore */
     }
   }
 }
@@ -178,22 +157,25 @@ const SOUND: Record<SensoryKind, () => void> = {
   },
 };
 
+/* ═══════════════════════════════════════════════════════════
+   SOUND — enabled by default for new users
+   ------------------------------------------------------------
+   If user has never set a preference, sound is ON.
+   If user explicitly turned it OFF, it stays OFF.
+   ═══════════════════════════════════════════════════════════ */
 function isSoundEnabled(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return localStorage.getItem(SOUND_PREF_KEY) === "1";
+    const stored = localStorage.getItem(SOUND_PREF_KEY);
+    if (stored === null) return true; /* default ON */
+    return stored === "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PUBLIC API
-   ═══════════════════════════════════════════════════════════ */
 export function triggerSensory(kind: SensoryKind) {
-  /* Haptic first — MUST be synchronous within user gesture */
   vibrate(HAPTIC[kind]);
-  /* Sound second */
   if (isSoundEnabled()) {
     SOUND[kind]();
   }
@@ -208,21 +190,21 @@ export function dispatchSensoryResult(kind: "success" | "error") {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SELECTORS
-   ═══════════════════════════════════════════════════════════ */
 const SNAP_SELECTOR = [
   ".btn-primary",
   ".button-primary",
   ".nav-order-button",
   ".mobile-nav-cta",
   ".project-modal-nav-demo",
+  ".oform-btn--primary",
   '[data-sensory="snap"]',
 ].join(",");
 
 const SELECT_SELECTOR = [
   ".project-type-option",
   ".contact-method",
+  ".oform-option",
+  ".oform-contact",
   ".blog-tag-chip",
   '[data-sensory="select"]',
 ].join(",");
@@ -230,6 +212,7 @@ const SELECT_SELECTOR = [
 const TOGGLE_SELECTOR = [
   ".theme-toggle",
   ".form-checkbox",
+  ".oform-check",
   ".sound-toggle",
   '[data-sensory="toggle"]',
 ].join(",");
@@ -244,13 +227,6 @@ const TAP_SELECTOR = [
   '[data-sensory="tap"]',
 ].join(",");
 
-/* ═══════════════════════════════════════════════════════════
-   COMPONENT — attaches listener on `touchstart` AND `pointerdown`
-   ------------------------------------------------------------
-   Using `touchstart` on touch devices is more reliable than
-   `pointerdown` because the gesture token is fresher and no
-   other pointer handler can interfere.
-   ═══════════════════════════════════════════════════════════ */
 export default function SensoryFeedback() {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -278,14 +254,7 @@ export default function SensoryFeedback() {
       if (kind) triggerSensory(kind);
     };
 
-    /*
-     * On touch devices, use `touchstart` — it's the most reliable
-     * gesture source for the Vibration API. Using `pointerdown`
-     * works too, but `touchstart` fires first and cannot be
-     * cancelled by other handlers.
-     */
     const eventName = isTouch ? "touchstart" : "pointerdown";
-
     document.addEventListener(eventName, handleEvent, { passive: true });
 
     return () => {

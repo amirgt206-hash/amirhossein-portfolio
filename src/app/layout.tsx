@@ -47,31 +47,34 @@ import "@/styles/welcome-onboarding.css";
 /* 14. Order form v2 */
 import "@/styles/order-form-v2.css";
 
-/* 15. Layout */
+/* 15. Mobile declutter — must come late to override */
+import "@/styles/mobile-declutter.css";
+
+/* 16. Layout */
 import "@/styles/layout.css";
 
-/* 16. Layout more */
+/* 17. Layout more */
 import "@/styles/layout-more.css";
 
-/* 17. Footer effects */
+/* 18. Footer effects */
 import "@/styles/footer-effects.css";
 
-/* 18. Pages */
+/* 19. Pages */
 import "@/styles/pages.css";
 
-/* 19. Responsive */
+/* 20. Responsive */
 import "@/styles/responsive.css";
 
-/* 20. Enhancements */
+/* 21. Enhancements */
 import "@/styles/enhancements.css";
 
-/* 21. Mobile fix */
+/* 22. Mobile fix */
 import "@/styles/mobile-fix.css";
 
-/* 22. Blog */
+/* 23. Blog */
 import "@/app/blog/blog.css";
 
-/* 23. Theme toggle */
+/* 24. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";

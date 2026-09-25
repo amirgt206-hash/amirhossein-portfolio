@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import { SOUND_PREF_KEY } from "@/components/SensoryFeedback";
 
 export default function SoundToggle() {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true); /* default ON */
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     try {
-      setEnabled(localStorage.getItem(SOUND_PREF_KEY) === "1");
+      const stored = localStorage.getItem(SOUND_PREF_KEY);
+      /* If user never set a preference, it's ON */
+      setEnabled(stored === null ? true : stored === "1");
     } catch {
-      /* ignore */
+      setEnabled(true);
     }
   }, []);
 
@@ -53,7 +55,7 @@ export default function SoundToggle() {
 
     if ("vibrate" in navigator) {
       try {
-        navigator.vibrate(10);
+        navigator.vibrate([0, 30]);
       } catch {
         /* ignore */
       }
