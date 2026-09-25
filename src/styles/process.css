@@ -1,7 +1,9 @@
 /* ============================================================
-   PROCESS SECTION — 4-step workflow
+   PROCESS SECTION — 4-step workflow (v2)
    ------------------------------------------------------------
-   Editorial style, matches the site's existing identity
+   - Cards use intrinsic height (no stretch)
+   - Description text has room to breathe
+   - Balanced h2 / description
    ============================================================ */
 
 .process-section {
@@ -30,7 +32,7 @@
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 18px;
-  margin-bottom: clamp(40px, 5vw, 64px);
+  margin-bottom: clamp(32px, 4vw, 48px);
   border-bottom: 1px solid var(--line);
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -54,33 +56,51 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   GRID
+   HEADING — smaller h2, larger description
+   ═══════════════════════════════════════════════════════════ */
+.process-section .section-heading h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.process-section .section-heading > p {
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 440px;
+  color: var(--ink-2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRID — cards have intrinsic height
    ═══════════════════════════════════════════════════════════ */
 .process-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
   list-style: none;
   padding: 0;
-  margin: 0 0 clamp(40px, 5vw, 64px);
+  margin: 0 0 clamp(32px, 4vw, 48px);
+  align-items: start;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STEP CARD
+   CARD — intrinsic height, content-based
    ═══════════════════════════════════════════════════════════ */
 .process-step {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: clamp(24px, 3.5vw, 36px);
-  border-radius: 20px;
+  gap: 14px;
+  padding: clamp(22px, 2.6vw, 28px);
+  border-radius: 18px;
   background: var(--surface);
   border: 1px solid var(--line);
   transition:
     border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--step-index, 0) * 60ms);
 }
 
 .process-step:hover {
@@ -95,19 +115,19 @@
 .process-step-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .process-step-num {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--accent-tint);
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
   flex-shrink: 0;
@@ -118,35 +138,37 @@
   height: 1px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--accent) 30%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 25%, transparent) 0%,
     transparent 100%
   );
+  min-width: 20px;
 }
 
 .process-step-short {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-3);
   direction: ltr;
   flex-shrink: 0;
 }
 
-/* ═══════ Title & Desc ═══════ */
+/* ═══════ Title ═══════ */
 .process-step-title {
   margin: 0;
-  font-size: clamp(19px, 1.8vw, 22px);
+  font-size: clamp(17px, 1.5vw, 19px);
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.3;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
 
+/* ═══════ Description ═══════ */
 .process-step-desc {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 13.5px;
   line-height: 1.85;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -155,9 +177,9 @@
 /* ═══════ List ═══════ */
 .process-step-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
-  padding: 18px 0 0;
+  padding: 14px 0 0;
   border-top: 1px solid var(--line);
   list-style: none;
 }
@@ -165,8 +187,8 @@
 .process-step-list li {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  font-size: 13.5px;
+  gap: 9px;
+  font-size: 12.5px;
   line-height: 1.6;
   color: var(--ink-3-strong);
 }
@@ -174,9 +196,9 @@
 .process-step-bullet {
   flex-shrink: 0;
   display: block;
-  width: 6px;
-  height: 6px;
-  margin-top: 8px;
+  width: 5px;
+  height: 5px;
+  margin-top: 7px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--accent) 30%, transparent);
   border: 1.5px solid var(--accent);
@@ -189,7 +211,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   text-align: center;
 }
 
@@ -203,7 +225,7 @@
 .process-footer-text {
   max-width: 520px;
   margin: 0;
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.75;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -215,19 +237,12 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STAGGERED REVEAL
-   ═══════════════════════════════════════════════════════════ */
-.process-step {
-  transition-delay: calc(var(--step-index, 0) * 80ms);
-}
-
-/* ═══════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .process-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
   }
 }
 
@@ -236,68 +251,83 @@
     font-size: 9.5px;
     letter-spacing: 0.14em;
     padding-bottom: 14px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .process-masthead-center {
     font-size: 16px;
   }
 
+  .process-section .section-heading h2 {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  .process-section .section-heading > p {
+    font-size: 13.5px;
+    line-height: 1.75;
+    max-width: 100%;
+  }
+
   .process-step {
-    padding: 20px 18px;
-    border-radius: 16px;
-    gap: 14px;
+    padding: 18px 16px;
+    border-radius: 14px;
+    gap: 12px;
   }
 
   .process-step-num {
-    width: 30px;
-    height: 30px;
-    font-size: 10.5px;
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
   }
 
   .process-step-short {
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
+    font-size: 9px;
+    letter-spacing: 0.16em;
   }
 
   .process-step-title {
-    font-size: 17px;
+    font-size: 15.5px;
+    line-height: 1.35;
   }
 
   .process-step-desc {
-    font-size: 13.5px;
+    font-size: 13px;
     line-height: 1.8;
   }
 
   .process-step-list {
-    padding-top: 14px;
-    gap: 8px;
+    padding-top: 12px;
+    gap: 6px;
   }
 
   .process-step-list li {
-    font-size: 12.5px;
+    font-size: 12px;
   }
 
   .process-step-bullet {
-    margin-top: 7px;
+    margin-top: 6px;
   }
 
   .process-footer-text {
-    font-size: 13px;
+    font-size: 12.5px;
   }
 }
 
 @media (max-width: 400px) {
   .process-step {
-    padding: 18px 16px;
+    padding: 16px 14px;
   }
 
   .process-step-title {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .process-step-desc {
-    font-size: 13px;
+    font-size: 12.5px;
+  }
+
+  .process-step-list li {
+    font-size: 11.5px;
   }
 }
 
