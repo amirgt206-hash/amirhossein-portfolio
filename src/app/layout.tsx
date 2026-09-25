@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 
 /* ═══════════════════════════════════════════════════════════
-   CSS — Order matters!
+   CSS — Order matters! process.css must come AFTER layout-more.css
    ═══════════════════════════════════════════════════════════ */
 
 /* 1. Design tokens */
@@ -53,29 +53,29 @@ import "@/styles/mobile-declutter.css";
 /* 16. Work pages */
 import "@/styles/work-pages.css";
 
-/* 17. Process */
-import "@/styles/process.css";
-
-/* 18. Commitments */
-import "@/styles/commitments.css";
-
-/* 19. Layout */
+/* 17. Layout */
 import "@/styles/layout.css";
 
-/* 20. Layout more */
+/* 18. Layout more */
 import "@/styles/layout-more.css";
 
-/* 21. Footer effects */
+/* 19. Footer effects */
 import "@/styles/footer-effects.css";
 
-/* 22. Pages */
+/* 20. Pages */
 import "@/styles/pages.css";
 
-/* 23. Responsive */
+/* 21. Responsive */
 import "@/styles/responsive.css";
 
-/* 24. Enhancements */
+/* 22. Enhancements */
 import "@/styles/enhancements.css";
+
+/* 23. Process — AFTER layout-more so it wins */
+import "@/styles/process.css";
+
+/* 24. Commitments */
+import "@/styles/commitments.css";
 
 /* 25. Mobile fix */
 import "@/styles/mobile-fix.css";

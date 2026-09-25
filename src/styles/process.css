@@ -1,9 +1,5 @@
 /* ============================================================
-   PROCESS SECTION — 4-step workflow (v2)
-   ------------------------------------------------------------
-   - Cards use intrinsic height (no stretch)
-   - Description text has room to breathe
-   - Balanced h2 / description
+   PROCESS SECTION — 4-step workflow (v3 — hard override)
    ============================================================ */
 
 .process-section {
@@ -23,9 +19,7 @@
   pointer-events: none;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MASTHEAD
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ MASTHEAD ═══ */
 .process-masthead {
   display: flex;
   align-items: center;
@@ -55,9 +49,7 @@
   color: var(--accent);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HEADING — smaller h2, larger description
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ HEADING ═══ */
 .process-section .section-heading h2 {
   font-size: clamp(1.75rem, 3.5vw, 2.75rem);
   line-height: 1.15;
@@ -71,178 +63,184 @@
   color: var(--ink-2);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   GRID — cards have intrinsic height
-   ═══════════════════════════════════════════════════════════ */
-.process-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 clamp(32px, 4vw, 48px);
-  align-items: start;
+/* ═══ GRID ═══ */
+.process-section .process-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 clamp(32px, 4vw, 48px) !important;
+  align-items: start !important;
+  border: 0 !important;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CARD — intrinsic height, content-based
-   ═══════════════════════════════════════════════════════════ */
-.process-step {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: clamp(22px, 2.6vw, 28px);
-  border-radius: 18px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+/* ═══ CARD — HARD OVERRIDE against layout-more.css ═══ */
+.process-section .process-step {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+  padding: clamp(22px, 2.6vw, 28px) !important;
+  border-radius: 18px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-bottom: 1px solid var(--line) !important;
   transition:
     border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1) !important;
   transition-delay: calc(var(--step-index, 0) * 60ms);
 }
 
-.process-step:hover {
-  border-color: color-mix(in srgb, var(--accent) 25%, var(--line));
-  transform: translateY(-3px);
+.process-section .process-step:hover {
+  border-color: color-mix(in srgb, var(--accent) 25%, var(--line)) !important;
+  transform: translateY(-3px) !important;
   box-shadow:
     0 2px 8px -2px rgba(10, 9, 8, 0.04),
-    0 16px 40px -20px rgba(10, 9, 8, 0.12);
+    0 16px 40px -20px rgba(10, 9, 8, 0.12) !important;
 }
 
-/* ═══════ Head ═══════ */
-.process-step-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ═══ Head ═══ */
+.process-section .process-step-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.process-step-num {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--accent-tint);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
+.process-section .process-step-num {
+  display: grid !important;
+  place-items: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: var(--accent-tint) !important;
+  color: var(--accent) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 
-.process-step-line {
-  flex: 1;
-  height: 1px;
+.process-section .process-step-line {
+  flex: 1 !important;
+  height: 1px !important;
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--accent) 25%, transparent) 0%,
     transparent 100%
-  );
-  min-width: 20px;
+  ) !important;
+  min-width: 20px !important;
 }
 
-.process-step-short {
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  direction: ltr;
-  flex-shrink: 0;
+.process-section .process-step-short {
+  font-family: var(--font-mono) !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-3) !important;
+  direction: ltr !important;
+  flex-shrink: 0 !important;
 }
 
-/* ═══════ Title ═══════ */
-.process-step-title {
-  margin: 0;
-  font-size: clamp(17px, 1.5vw, 19px);
-  font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+/* ═══ Title ═══ */
+.process-section .process-step-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(17px, 1.5vw, 19px) !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--ink) !important;
 }
 
-/* ═══════ Description ═══════ */
-.process-step-desc {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.85;
-  color: var(--ink-2);
-  text-wrap: pretty;
+/* ═══ Description ═══ */
+.process-section .process-step-desc {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.85 !important;
+  color: var(--ink-2) !important;
+  text-wrap: pretty !important;
 }
 
-/* ═══════ List ═══════ */
-.process-step-list {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 14px 0 0;
-  border-top: 1px solid var(--line);
-  list-style: none;
+/* ═══ List ═══ */
+.process-section .process-step-list {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 14px 0 0 !important;
+  border-top: 1px solid var(--line) !important;
+  border-bottom: 0 !important;
+  list-style: none !important;
 }
 
-.process-step-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: var(--ink-3-strong);
+.process-section .process-step-list li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 9px !important;
+  font-size: 12.5px !important;
+  line-height: 1.6 !important;
+  color: var(--ink-3-strong) !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.process-step-bullet {
-  flex-shrink: 0;
-  display: block;
-  width: 5px;
-  height: 5px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-  border: 1.5px solid var(--accent);
+.process-section .process-step-bullet {
+  flex-shrink: 0 !important;
+  display: block !important;
+  width: 5px !important;
+  height: 5px !important;
+  margin-top: 7px !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+  border: 1.5px solid var(--accent) !important;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FOOTER NOTE
-   ═══════════════════════════════════════════════════════════ */
-.process-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  text-align: center;
+/* ═══ Footer note ═══ */
+.process-section .process-footer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 18px !important;
+  text-align: center !important;
 }
 
-.process-footer-line {
-  width: 40px;
-  height: 1px;
-  background: var(--accent);
-  opacity: 0.5;
+.process-section .process-footer-line {
+  width: 40px !important;
+  height: 1px !important;
+  background: var(--accent) !important;
+  opacity: 0.5 !important;
 }
 
-.process-footer-text {
-  max-width: 520px;
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: var(--ink-2);
-  text-wrap: pretty;
+.process-section .process-footer-text {
+  max-width: 520px !important;
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.75 !important;
+  color: var(--ink-2) !important;
+  text-wrap: pretty !important;
 }
 
-.process-footer-text strong {
-  color: var(--ink);
-  font-weight: 700;
+.process-section .process-footer-text strong {
+  color: var(--ink) !important;
+  font-weight: 700 !important;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ RESPONSIVE ═══ */
 @media (max-width: 900px) {
-  .process-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .process-section .process-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
   }
 }
 
@@ -268,71 +266,71 @@
     max-width: 100%;
   }
 
-  .process-step {
-    padding: 18px 16px;
-    border-radius: 14px;
-    gap: 12px;
+  .process-section .process-step {
+    padding: 18px 16px !important;
+    border-radius: 14px !important;
+    gap: 12px !important;
   }
 
-  .process-step-num {
-    width: 28px;
-    height: 28px;
-    font-size: 10px;
+  .process-section .process-step-num {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 10px !important;
   }
 
-  .process-step-short {
-    font-size: 9px;
-    letter-spacing: 0.16em;
+  .process-section .process-step-short {
+    font-size: 9px !important;
+    letter-spacing: 0.16em !important;
   }
 
-  .process-step-title {
-    font-size: 15.5px;
-    line-height: 1.35;
+  .process-section .process-step-title {
+    font-size: 15.5px !important;
+    line-height: 1.35 !important;
   }
 
-  .process-step-desc {
-    font-size: 13px;
-    line-height: 1.8;
+  .process-section .process-step-desc {
+    font-size: 13px !important;
+    line-height: 1.8 !important;
   }
 
-  .process-step-list {
-    padding-top: 12px;
-    gap: 6px;
+  .process-section .process-step-list {
+    padding-top: 12px !important;
+    gap: 6px !important;
   }
 
-  .process-step-list li {
-    font-size: 12px;
+  .process-section .process-step-list li {
+    font-size: 12px !important;
   }
 
-  .process-step-bullet {
-    margin-top: 6px;
+  .process-section .process-step-bullet {
+    margin-top: 6px !important;
   }
 
-  .process-footer-text {
-    font-size: 12.5px;
+  .process-section .process-footer-text {
+    font-size: 12.5px !important;
   }
 }
 
 @media (max-width: 400px) {
-  .process-step {
-    padding: 16px 14px;
+  .process-section .process-step {
+    padding: 16px 14px !important;
   }
 
-  .process-step-title {
-    font-size: 15px;
+  .process-section .process-step-title {
+    font-size: 15px !important;
   }
 
-  .process-step-desc {
-    font-size: 12.5px;
+  .process-section .process-step-desc {
+    font-size: 12.5px !important;
   }
 
-  .process-step-list li {
-    font-size: 11.5px;
+  .process-section .process-step-list li {
+    font-size: 11.5px !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .process-step {
+  .process-section .process-step {
     transition: none !important;
     transform: none !important;
   }
