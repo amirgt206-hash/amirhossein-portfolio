@@ -3,13 +3,6 @@
 import { useEffect, useState } from "react";
 import { SOUND_PREF_KEY } from "@/components/SensoryFeedback";
 
-/* ═══════════════════════════════════════════════════════════
-   SOUND TOGGLE — opt-in sensory audio
-   ------------------------------------------------------------
-   Small button in the footer. Enables/disables subtle UI
-   sounds globally. Preference is stored in localStorage.
-   ═══════════════════════════════════════════════════════════ */
-
 export default function SoundToggle() {
   const [enabled, setEnabled] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -32,12 +25,15 @@ export default function SoundToggle() {
       /* ignore */
     }
 
-    /* Play a confirmation tone when enabling */
+    /* Confirmation tone when enabling */
     if (next) {
       try {
-        const ctx = new (window.AudioContext ||
+        const Ctx =
+          window.AudioContext ||
           (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext)();
+            .webkitAudioContext;
+        const ctx = new Ctx();
+        if (ctx.state === "suspended") ctx.resume();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "sine";
@@ -55,7 +51,6 @@ export default function SoundToggle() {
       }
     }
 
-    /* Haptic on toggle */
     if ("vibrate" in navigator) {
       try {
         navigator.vibrate(10);

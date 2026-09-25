@@ -1,0 +1,340 @@
+/* ============================================================
+   WELCOME ONBOARDING — Editorial Cover
+   ------------------------------------------------------------
+   - Full-screen overlay with backdrop blur
+   - Card styled like a magazine cover
+   - Responsive: full-screen on mobile, centered on desktop
+   ============================================================ */
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: welcomeFadeIn 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.welcome-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--paper) 65%, transparent);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  z-index: 0;
+}
+
+[data-theme="dark"] .welcome-backdrop {
+  background: color-mix(in srgb, #000 70%, transparent);
+}
+
+/* ═══ Card ═══ */
+.welcome-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 720px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: clamp(28px, 5vw, 48px);
+  border-radius: 32px;
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 1px 0 0 color-mix(in srgb, #fff 40%, transparent) inset,
+    0 2px 8px -2px rgba(10, 9, 8, 0.08),
+    0 40px 100px -20px rgba(10, 9, 8, 0.28);
+  animation: welcomeCardIn 600ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+}
+
+@keyframes welcomeFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes welcomeCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ═══ Masthead ═══ */
+.welcome-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.welcome-masthead-left,
+.welcome-masthead-right {
+  opacity: 0.7;
+}
+
+.welcome-masthead-mark {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+/* ═══ Hero ═══ */
+.welcome-hero {
+  padding: clamp(24px, 4vw, 36px) 0 clamp(24px, 4vw, 32px);
+  text-align: center;
+}
+
+.welcome-eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.welcome-title {
+  margin: 0 0 18px;
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.welcome-title-em {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+
+.welcome-title-em::after {
+  content: "";
+  position: absolute;
+  inset-inline: -4px;
+  bottom: 0.1em;
+  height: 0.08em;
+  background: var(--accent);
+  opacity: 0.25;
+  border-radius: 4px;
+}
+
+.welcome-subtitle {
+  max-width: 480px;
+  margin: 0 auto;
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ═══ Chapters ═══ */
+.welcome-chapters {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 clamp(24px, 4vw, 32px);
+  padding: 0;
+  list-style: none;
+}
+
+.welcome-chapter {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.welcome-chapter:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--accent-tint) 30%, var(--paper-2));
+}
+
+.welcome-chapter-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.welcome-chapter-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-chapter-title {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.welcome-chapter-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-3-strong);
+}
+
+/* ═══ Footer ═══ */
+.welcome-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: clamp(20px, 3vw, 28px);
+  border-top: 1px solid var(--line);
+}
+
+.welcome-cta {
+  width: 100%;
+  max-width: 320px;
+  min-height: 56px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 16px;
+}
+
+.welcome-skip {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.welcome-skip:hover {
+  color: var(--accent);
+}
+
+/* ═══ Mobile ═══ */
+@media (max-width: 720px) {
+  .welcome-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .welcome-card {
+    max-width: 100%;
+    max-height: 92svh;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    animation: welcomeCardMobileIn 500ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+  }
+
+  @keyframes welcomeCardMobileIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .welcome-masthead {
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+  }
+
+  .welcome-masthead-mark {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .welcome-hero {
+    padding: 20px 0;
+  }
+
+  .welcome-eyebrow {
+    font-size: 9px;
+    margin-bottom: 12px;
+  }
+
+  .welcome-title {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    margin-bottom: 14px;
+  }
+
+  .welcome-subtitle {
+    font-size: 13.5px;
+    line-height: 1.75;
+  }
+
+  .welcome-chapters {
+    gap: 8px;
+  }
+
+  .welcome-chapter {
+    padding: 12px 14px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .welcome-chapter-num {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .welcome-chapter-title {
+    font-size: 14px;
+  }
+
+  .welcome-chapter-text {
+    font-size: 12.5px;
+  }
+
+  .welcome-cta {
+    min-height: 54px;
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-overlay,
+  .welcome-card {
+    animation: none;
+  }
+}

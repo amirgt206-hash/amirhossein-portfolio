@@ -1,19 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 /* ═══════════════════════════════════════════════════════════
-   SENSORY FEEDBACK — Haptic + Sound
+   SENSORY FEEDBACK — Haptic + Sound (fixed)
    ------------------------------------------------------------
-   Haptic: uses navigator.vibrate() — Android only, gracefully
-           no-ops on iOS (Safari doesn't support it).
-   Sound:  uses Web Audio API to synthesize subtle tones on the
-           fly — no files, no bandwidth, no latency.
-           Off by default; user can enable via SoundToggle.
+   - Listeners always attached (no conditional mount)
+   - Sound preference checked at runtime (not at mount)
+   - Haptic works on Android regardless of sound
+   - Sound toggle state read from localStorage on every tap
    ═══════════════════════════════════════════════════════════ */
 
-/* Haptic patterns (ms) */
-const HAPTIC = {
+export const SOUND_PREF_KEY = "sound-enabled";
+
+export type SensoryKind =
+  | "tap"
+  | "select"
+  | "toggle"
+  | "success"
+  | "error"
+  | "longPress"
+  | "swipe"
+  | "snap";
+
+const HAPTIC: Record<SensoryKind, number | number[]> = {
   tap: 8,
   select: 12,
   toggle: 10,
@@ -24,10 +34,7 @@ const HAPTIC = {
   snap: 10,
 };
 
-/* Sound preferences key */
-export const SOUND_PREF_KEY = "sound-enabled";
-
-/* Audio context (lazy, shared) */
+/* ── Shared AudioContext ── */
 let audioCtx: AudioContext | null = null;
 
 function getAudioCtx(): AudioContext | null {
@@ -45,7 +52,6 @@ function getAudioCtx(): AudioContext | null {
   }
 }
 
-/* Synthesize a subtle tone — extremely quiet by default */
 function playTone({
   freq,
   duration = 0.08,
@@ -61,7 +67,6 @@ function playTone({
   if (!ctx) return;
 
   try {
-    /* Resume context if suspended (autoplay policy) */
     if (ctx.state === "suspended") {
       ctx.resume();
     }
@@ -72,7 +77,6 @@ function playTone({
     osc.type = type;
     osc.frequency.value = freq;
 
-    /* Envelope: attack + quick exponential decay */
     const now = ctx.currentTime;
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(volume, now + 0.005);
@@ -88,11 +92,13 @@ function playTone({
   }
 }
 
-/* ── Sound presets ── */
-const SOUND = {
+const SOUND: Record<SensoryKind, () => void> = {
   tap: () => playTone({ freq: 520, duration: 0.05, volume: 0.015 }),
   select: () => playTone({ freq: 660, duration: 0.07, volume: 0.02 }),
   toggle: () => playTone({ freq: 780, duration: 0.08, volume: 0.02 }),
+  snap: () => playTone({ freq: 580, duration: 0.06, volume: 0.018 }),
+  swipe: () => playTone({ freq: 440, duration: 0.04, volume: 0.012 }),
+  longPress: () => playTone({ freq: 480, duration: 0.06, volume: 0.018 }),
   success: () => {
     playTone({ freq: 660, duration: 0.1, volume: 0.025 });
     window.setTimeout(
@@ -101,15 +107,26 @@ const SOUND = {
     );
   },
   error: () => {
-    playTone({ freq: 320, duration: 0.12, volume: 0.025, type: "triangle" });
+    playTone({
+      freq: 320,
+      duration: 0.12,
+      volume: 0.025,
+      type: "triangle",
+    });
     window.setTimeout(
-      () => playTone({ freq: 260, duration: 0.16, volume: 0.025, type: "triangle" }),
+      () =>
+        playTone({
+          freq: 260,
+          duration: 0.16,
+          volume: 0.025,
+          type: "triangle",
+        }),
       110
     );
   },
 };
 
-/* ── Haptic helper ── */
+/* ── Helpers ── */
 function vibrate(pattern: number | number[]) {
   if (typeof navigator === "undefined") return;
   if (!("vibrate" in navigator)) return;
@@ -120,7 +137,6 @@ function vibrate(pattern: number | number[]) {
   }
 }
 
-/* ── Sound enabled check ── */
 function isSoundEnabled(): boolean {
   if (typeof window === "undefined") return false;
   try {
@@ -130,121 +146,87 @@ function isSoundEnabled(): boolean {
   }
 }
 
-/* ── Global sensory trigger (used by other components) ── */
-export type SensoryKind =
-  | "tap"
-  | "select"
-  | "toggle"
-  | "success"
-  | "error"
-  | "longPress"
-  | "swipe"
-  | "snap";
-
+/* ── Global trigger ── */
 export function triggerSensory(kind: SensoryKind) {
-  /* Haptic — always (if device supports) */
-  const hapticPattern = HAPTIC[kind as keyof typeof HAPTIC];
-  if (hapticPattern !== undefined) {
-    vibrate(hapticPattern);
-  }
-
-  /* Sound — only if user opted in */
+  vibrate(HAPTIC[kind]);
   if (isSoundEnabled()) {
-    const soundFn = SOUND[kind as keyof typeof SOUND];
-    soundFn?.();
+    SOUND[kind]();
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   COMPONENT — attaches global listeners
-   ═══════════════════════════════════════════════════════════ */
-export default function SensoryFeedback() {
-  const enabled = useRef(false);
+export function dispatchSensoryResult(kind: "success" | "error") {
+  triggerSensory(kind);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("sensory:result", { detail: { kind } })
+    );
+  }
+}
 
+/* ── Component ── */
+const SNAP_SELECTOR = [
+  ".btn-primary",
+  ".button-primary",
+  ".nav-order-button",
+  ".mobile-nav-cta",
+  ".project-modal-nav-demo",
+  '[data-sensory="snap"]',
+].join(",");
+
+const SELECT_SELECTOR = [
+  ".project-type-option",
+  ".contact-method",
+  ".blog-tag-chip",
+  '[data-sensory="select"]',
+].join(",");
+
+const TOGGLE_SELECTOR = [
+  ".theme-toggle",
+  ".form-checkbox",
+  ".sound-toggle",
+  '[data-sensory="toggle"]',
+].join(",");
+
+const TAP_SELECTOR = [
+  "a",
+  "button",
+  '[role="button"]',
+  ".btn",
+  ".button",
+  ".faq-question",
+  '[data-sensory="tap"]',
+].join(",");
+
+export default function SensoryFeedback() {
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    const isTouch =
-      window.matchMedia("(hover: none)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-
-    if (!isTouch && !isSoundEnabled()) return;
     if (reducedMotion) return;
 
-    enabled.current = true;
-
-    /* ── Pointerdown: tap haptic on interactive elements ── */
     const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
-      /* Primary CTAs — distinct haptic */
-      if (
-        target.closest(
-          '.btn-primary, .button-primary, .nav-order-button, .mobile-nav-cta, .project-modal-nav-demo, [data-sensory="snap"]'
-        )
-      ) {
-        triggerSensory("snap");
-        return;
-      }
+      let kind: SensoryKind | null = null;
 
-      /* Selectable options */
-      if (
-        target.closest(
-          '.project-type-option, .contact-method, .blog-tag-chip, [data-sensory="select"]'
-        )
-      ) {
-        triggerSensory("select");
-        return;
-      }
+      if (target.closest(SNAP_SELECTOR)) kind = "snap";
+      else if (target.closest(SELECT_SELECTOR)) kind = "select";
+      else if (target.closest(TOGGLE_SELECTOR)) kind = "toggle";
+      else if (target.closest(TAP_SELECTOR)) kind = "tap";
 
-      /* Toggles */
-      if (
-        target.closest('.theme-toggle, .form-checkbox, [data-sensory="toggle"]')
-      ) {
-        triggerSensory("toggle");
-        return;
-      }
-
-      /* Generic tap */
-      if (
-        target.closest(
-          'a, button, [role="button"], .btn, .button, .faq-question, [data-sensory="tap"]'
-        )
-      ) {
-        triggerSensory("tap");
-      }
-    };
-
-    /* ── Success / error from form events ── */
-    const handleFormResult = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.kind === "success") triggerSensory("success");
-      else if (detail?.kind === "error") triggerSensory("error");
+      if (kind) triggerSensory(kind);
     };
 
     document.addEventListener("pointerdown", handlePointerDown, {
       passive: true,
     });
-    window.addEventListener("sensory:result", handleFormResult);
 
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
-      window.removeEventListener("sensory:result", handleFormResult);
-      enabled.current = false;
     };
   }, []);
 
   return null;
-}
-
-/* ── Utility for other components ── */
-export function dispatchSensoryResult(kind: "success" | "error") {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(
-    new CustomEvent("sensory:result", { detail: { kind } })
-  );
 }

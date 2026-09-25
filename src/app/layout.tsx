@@ -20,47 +20,67 @@ import "@/styles/magnetic.css";
 /* 5. Reveal system */
 import "@/styles/reveal.css";
 
-/* 6. Mobile touch feedback */
+/* 6. Mobile touch */
 import "@/styles/mobile-touch.css";
-/* بعد از mobile-touch.css: */
+
+/* 7. Mobile modal */
 import "@/styles/mobile-modal.css";
+
+/* 8. Mobile forms */
 import "@/styles/mobile-forms.css";
+
+/* 9. Mobile typography */
 import "@/styles/mobile-typography.css";
+
+/* 10. Mobile nav v2 */
 import "@/styles/mobile-nav-v2.css";
+
+/* 11. Perceived performance */
 import "@/styles/perceived-performance.css";
+
+/* 12. Adaptive navigation */
 import "@/styles/adaptive-navigation.css";
+
+/* 13. Form progress */
 import "@/styles/form-progress.css";
+
+/* 14. Sensory feedback */
 import "@/styles/sensory.css";
 
-/* 7. Layout */
+/* 15. Welcome onboarding */
+import "@/styles/welcome-onboarding.css";
+
+/* 16. Layout */
 import "@/styles/layout.css";
 
-/* 8. Layout more */
+/* 17. Layout more */
 import "@/styles/layout-more.css";
 
-/* 9. Footer effects */
+/* 18. Footer effects */
 import "@/styles/footer-effects.css";
 
-/* 10. Pages */
+/* 19. Pages */
 import "@/styles/pages.css";
 
-/* 11. Responsive */
+/* 20. Responsive */
 import "@/styles/responsive.css";
 
-/* 12. Enhancements */
+/* 21. Enhancements */
 import "@/styles/enhancements.css";
 
-/* 13. Mobile fix */
+/* 22. Mobile fix */
 import "@/styles/mobile-fix.css";
 
-/* 14. Blog */
+/* 23. Blog */
 import "@/app/blog/blog.css";
 
-/* 15. Theme toggle */
+/* 24. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import WelcomeOnboarding from "@/components/WelcomeOnboarding";
 import TouchFeedback from "@/components/TouchFeedback";
+import SensoryFeedback from "@/components/SensoryFeedback";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { allSchemas } from "@/lib/schema";
@@ -224,7 +244,9 @@ export default function RootLayout({
           پرش به محتوای اصلی
         </a>
         <ThemeProvider>{children}</ThemeProvider>
+        <WelcomeOnboarding />
         <TouchFeedback />
+        <SensoryFeedback />
         <Analytics />
         <SpeedInsights />
       </body>
