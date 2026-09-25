@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 
 /* ═══════════════════════════════════════════════════════════
-   CSS — Order matters! process.css must come AFTER layout-more.css
+   CSS — Order matters!
    ═══════════════════════════════════════════════════════════ */
 
 /* 1. Design tokens */
@@ -80,10 +80,13 @@ import "@/styles/commitments.css";
 /* 25. Mobile fix */
 import "@/styles/mobile-fix.css";
 
-/* 26. Blog */
+/* 26. Mobile polish v2 — LAST mobile override */
+import "@/styles/mobile-polish-v2.css";
+
+/* 27. Blog */
 import "@/app/blog/blog.css";
 
-/* 27. Theme toggle */
+/* 28. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
