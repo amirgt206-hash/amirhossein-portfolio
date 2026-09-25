@@ -1,57 +1,96 @@
 /* ============================================================
-   FORM PROGRESS — Native-Grade Feedback
+   FORM PROGRESS — Refined & Elegant
    ------------------------------------------------------------
-   - Sticky progress bar at top of form
-   - GPU-accelerated transform
-   - Smooth color transition as progress grows
-   - Inline field validation states
+   - Circular percent badge on the start
+   - Smooth gradient bar
+   - No sticky header feel — natural flow inside form
+   - Refined field validation icons
    ============================================================ */
 
 /* ═══════════════════════════════════════════════════════════
-   FORM PROGRESS BAR
+   FORM PROGRESS
    ═══════════════════════════════════════════════════════════ */
 .form-progress {
-  position: sticky;
-  top: 68px;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
-  margin-bottom: 1px;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  padding: 14px 24px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--paper-2) 100%, transparent) 0%,
+    color-mix(in srgb, var(--surface) 100%, transparent) 100%
+  );
   border-bottom: 1px solid var(--line);
   animation: formProgressIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.form-progress-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Circular percent badge ── */
+.form-progress-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+  min-width: 44px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 13px;
+  transition:
+    background-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.form-progress-badge-value {
+  line-height: 1;
+}
+
+.form-progress-badge-unit {
+  font-size: 10px;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+/* When complete, badge turns green */
+.form-progress[aria-valuenow="100"] .form-progress-badge {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+}
+
+/* ── Bar ── */
 .form-progress-track {
   flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--paper-2);
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--line-strong) 40%, transparent);
   overflow: hidden;
   position: relative;
 }
 
 .form-progress-fill {
   position: absolute;
-  inset: 0;
+  inset-block: 0;
+  inset-inline-start: 0;
   border-radius: inherit;
   background: linear-gradient(
     90deg,
     var(--accent-2) 0%,
     var(--accent) 100%
   );
-  transform-origin: right center;
   transition:
-    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 500ms cubic-bezier(0.22, 1, 0.36, 1),
     background 400ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
+  will-change: width;
 }
 
-/* Color shifts as progress approaches completion */
 .form-progress[aria-valuenow="100"] .form-progress-fill {
   background: linear-gradient(
     90deg,
@@ -60,20 +99,25 @@
   );
 }
 
+/* ── Label ── */
 .form-progress-label {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
+  flex-shrink: 0;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  color: var(--ink-3-strong);
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+  transition: color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.form-progress[aria-valuenow="100"] .form-progress-label {
+  color: var(--success);
 }
 
 @keyframes formProgressIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -82,63 +126,93 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INLINE FIELD VALIDATION
-   Field states: idle / success / error
+   FIELD VALIDATION — Refined icons
+   Smaller, better positioned, less intrusive
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Field wrapper ── */
+/* ── Shared: field wrapper ── */
 .form-field {
   position: relative;
 }
 
-/* ── Success state — small checkmark inside field ── */
+/* ── Success state ── */
 .form-field[data-state="success"] input,
 .form-field[data-state="success"] textarea {
-  border-color: color-mix(in srgb, var(--success) 50%, transparent);
-  padding-inline-end: 44px;
+  border-color: color-mix(in srgb, var(--success) 40%, var(--line));
+  background: linear-gradient(
+    180deg,
+    var(--surface) 0%,
+    color-mix(in srgb, var(--surface) 94%, var(--success)) 100%
+  );
+  padding-inline-end: 46px;
 }
 
 .form-field[data-state="success"]::after {
   content: "";
   position: absolute;
-  inset-inline-end: 16px;
-  top: calc(50% + 10px);
-  width: 18px;
-  height: 18px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
-  background-size: contain;
+  inset-inline-end: 14px;
+  top: 42px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--success) 14%, transparent);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size: 12px;
   background-repeat: no-repeat;
-  transform: translateY(-50%);
+  background-position: center;
   pointer-events: none;
-  animation: fieldSuccessIn 320ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  animation: fieldIconIn 320ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-/* ── Error state — small X inside field ── */
+/* ── Error state ── */
 .form-field[data-state="error"] input,
 .form-field[data-state="error"] textarea {
-  border-color: color-mix(in srgb, var(--danger) 60%, transparent);
-  padding-inline-end: 44px;
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--line));
+  background: linear-gradient(
+    180deg,
+    var(--surface) 0%,
+    color-mix(in srgb, var(--surface) 96%, var(--danger)) 100%
+  );
+  padding-inline-end: 46px;
 }
 
 .form-field[data-state="error"]::after {
   content: "";
   position: absolute;
-  inset-inline-end: 16px;
-  top: calc(50% + 10px);
-  width: 18px;
-  height: 18px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b42318' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>");
-  background-size: contain;
+  inset-inline-end: 14px;
+  top: 42px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--danger) 12%, transparent);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b42318' stroke-width='2.5' stroke-linecap='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>");
+  background-size: 11px;
   background-repeat: no-repeat;
-  transform: translateY(-50%);
+  background-position: center;
   pointer-events: none;
-  animation: fieldErrorIn 320ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  animation: fieldIconIn 320ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-/* ── Textarea adjustment ── */
+/* ── Textarea: position icon at top instead of vertical center ── */
 .form-field:has(textarea)[data-state="success"]::after,
 .form-field:has(textarea)[data-state="error"]::after {
-  top: 46px;
+  top: 54px;
+}
+
+/* ── Icon animation ── */
+@keyframes fieldIconIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ── Inline error message ── */
@@ -146,49 +220,11 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--danger);
-  animation: fieldErrorIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.form-field-error-icon {
-  flex-shrink: 0;
-  margin-top: 2px;
-  width: 14px;
-  height: 14px;
-}
-
-/* ── Animations ── */
-@keyframes fieldSuccessIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-50%) scale(0.4);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.15);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1);
-  }
-}
-
-@keyframes fieldErrorIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-50%) scale(0.4);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.15);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1);
-  }
+  animation: fieldErrorMessageIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes fieldErrorMessageIn {
@@ -202,15 +238,15 @@
   }
 }
 
-/* ── Character counter for textarea ── */
+/* ── Character counter ── */
 .form-field-counter {
   position: absolute;
-  bottom: 12px;
-  inset-inline-end: 16px;
+  bottom: 30px;
+  inset-inline-end: 18px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
@@ -226,13 +262,26 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MOBILE ADJUSTMENTS
+   MOBILE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 720px) {
   .form-progress {
-    top: 56px;
-    padding: 8px 16px;
+    padding: 12px 18px;
+  }
+
+  .form-progress-inner {
     gap: 10px;
+  }
+
+  .form-progress-badge {
+    min-width: 40px;
+    height: 28px;
+    font-size: 12px;
+    padding: 0 9px;
+  }
+
+  .form-progress-track {
+    height: 5px;
   }
 
   .form-progress-label {
@@ -241,13 +290,22 @@
 
   .form-field[data-state="success"]::after,
   .form-field[data-state="error"]::after {
-    inset-inline-end: 14px;
+    inset-inline-end: 12px;
+    top: 40px;
     width: 20px;
     height: 20px;
   }
 
-  .form-field-error {
-    font-size: 12px;
+  .form-field:has(textarea)[data-state="success"]::after,
+  .form-field:has(textarea)[data-state="error"]::after {
+    top: 48px;
+  }
+
+  .form-field[data-state="success"] input,
+  .form-field[data-state="error"] input,
+  .form-field[data-state="success"] textarea,
+  .form-field[data-state="error"] textarea {
+    padding-inline-end: 42px;
   }
 }
 
