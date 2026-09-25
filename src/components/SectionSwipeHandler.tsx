@@ -5,30 +5,25 @@ import { useSwipeNavigation } from "@/hooks/useSwipeNavigation";
 
 /* ═══════════════════════════════════════════════════════════
    SECTION SWIPE HANDLER
-   ------------------------------------------------------------
-   Enables swiping left/right between page sections on mobile.
-
-   The order matches the DOM order of main sections:
-   home → services → portfolio → about → why → blog → faq → cta
    ═══════════════════════════════════════════════════════════ */
 
 const SECTION_IDS = [
   "home",
   "services",
+  "process",
   "portfolio",
   "about",
   "why",
+  "commitments",
   "faq",
 ] as const;
 
-/* Sections that should NOT trigger swipe (blog, cta, footer) */
 const OPT_OUT = new Set(["blog", "cta", "final-cta"]);
 
 export default function SectionSwipeHandler() {
   const [currentSection, setCurrentSection] = useState<string>("home");
   const [enabled, setEnabled] = useState(false);
 
-  /* ── Only run on mobile ── */
   useEffect(() => {
     if (typeof window === "undefined") return;
     const check = () =>
@@ -38,7 +33,6 @@ export default function SectionSwipeHandler() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* ── Track which section is currently in view ── */
   useEffect(() => {
     if (!enabled) return;
     if (typeof IntersectionObserver === "undefined") return;
@@ -68,30 +62,30 @@ export default function SectionSwipeHandler() {
     return () => io.disconnect();
   }, [enabled]);
 
-  const goToSection = useCallback((direction: "next" | "prev") => {
-    const idx = SECTION_IDS.indexOf(
-      currentSection as (typeof SECTION_IDS)[number]
-    );
-    if (idx === -1) return;
+  const goToSection = useCallback(
+    (direction: "next" | "prev") => {
+      const idx = SECTION_IDS.indexOf(
+        currentSection as (typeof SECTION_IDS)[number]
+      );
+      if (idx === -1) return;
 
-    const nextIdx = direction === "next" ? idx + 1 : idx - 1;
-    if (nextIdx < 0 || nextIdx >= SECTION_IDS.length) return;
+      const nextIdx = direction === "next" ? idx + 1 : idx - 1;
+      if (nextIdx < 0 || nextIdx >= SECTION_IDS.length) return;
 
-    const targetId = SECTION_IDS[nextIdx];
-    if (OPT_OUT.has(targetId)) return;
+      const targetId = SECTION_IDS[nextIdx];
+      if (OPT_OUT.has(targetId)) return;
 
-    const target = document.getElementById(targetId);
-    if (!target) return;
+      const target = document.getElementById(targetId);
+      if (!target) return;
 
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, [currentSection]);
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    },
+    [currentSection]
+  );
 
-  /* In RTL:
-     - Swipe LEFT (finger moves left) → next section
-     - Swipe RIGHT (finger moves right) → previous section */
   useSwipeNavigation({
     onSwipeLeft: () => goToSection("next"),
     onSwipeRight: () => goToSection("prev"),

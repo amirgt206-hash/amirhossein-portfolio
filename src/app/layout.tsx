@@ -53,31 +53,37 @@ import "@/styles/mobile-declutter.css";
 /* 16. Work pages */
 import "@/styles/work-pages.css";
 
-/* 17. Layout */
+/* 17. Process */
+import "@/styles/process.css";
+
+/* 18. Commitments */
+import "@/styles/commitments.css";
+
+/* 19. Layout */
 import "@/styles/layout.css";
 
-/* 18. Layout more */
+/* 20. Layout more */
 import "@/styles/layout-more.css";
 
-/* 19. Footer effects */
+/* 21. Footer effects */
 import "@/styles/footer-effects.css";
 
-/* 20. Pages */
+/* 22. Pages */
 import "@/styles/pages.css";
 
-/* 21. Responsive */
+/* 23. Responsive */
 import "@/styles/responsive.css";
 
-/* 22. Enhancements */
+/* 24. Enhancements */
 import "@/styles/enhancements.css";
 
-/* 23. Mobile fix */
+/* 25. Mobile fix */
 import "@/styles/mobile-fix.css";
 
-/* 24. Blog */
+/* 26. Blog */
 import "@/app/blog/blog.css";
 
-/* 25. Theme toggle */
+/* 27. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";

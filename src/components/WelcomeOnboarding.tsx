@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "welcome-seen";
 
@@ -47,10 +47,26 @@ const STEPS = [
     titleEm: "اصلی سایت.",
     subtitle: "هر بخش را می‌توانی از منوی بالا یا پایین ببینی.",
     items: [
-      { num: "01", title: "نمونه‌کارها", text: "۴ پروژه‌ی منتخب با مطالعه‌ی موردی کامل." },
-      { num: "02", title: "خدمات", text: "وب، فرانت‌اند، هوش مصنوعی، تبلیغات و ویدیو." },
-      { num: "03", title: "درباره من", text: "داستان، اصول کاری و مهارت‌ها." },
-      { num: "04", title: "بلاگ", text: "مقالات درباره‌ی طراحی، فروش و تجربه‌ی کاربری." },
+      {
+        num: "01",
+        title: "نمونه‌کارها",
+        text: "۴ پروژه‌ی منتخب با مطالعه‌ی موردی کامل.",
+      },
+      {
+        num: "02",
+        title: "خدمات",
+        text: "وب، فرانت‌اند، هوش مصنوعی، تبلیغات و ویدیو.",
+      },
+      {
+        num: "03",
+        title: "درباره من",
+        text: "داستان، اصول کاری و مهارت‌ها.",
+      },
+      {
+        num: "04",
+        title: "بلاگ",
+        text: "مقالات درباره‌ی طراحی، فروش و تجربه‌ی کاربری.",
+      },
     ],
   },
 ];
@@ -67,15 +83,49 @@ export default function WelcomeOnboarding() {
       if (localStorage.getItem(STORAGE_KEY) === "1") return;
       const timer = window.setTimeout(() => setOpen(true), 900);
       return () => window.clearTimeout(timer);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    try {
+      localStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setStep((current) => {
+      if (current < STEPS.length - 1) {
+        setDir("next");
+        return current + 1;
+      }
+      handleClose();
+      return current;
+    });
+  }, [handleClose]);
+
+  const handlePrev = useCallback(() => {
+    setStep((current) => {
+      if (current > 0) {
+        setDir("prev");
+        return current - 1;
+      }
+      return current;
+    });
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -86,28 +136,7 @@ export default function WelcomeOnboarding() {
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [open, step]);
-
-  const handleClose = () => {
-    setOpen(false);
-    try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
-  };
-
-  const handleNext = () => {
-    if (step < STEPS.length - 1) {
-      setDir("next");
-      setStep(step + 1);
-    } else {
-      handleClose();
-    }
-  };
-
-  const handlePrev = () => {
-    if (step > 0) {
-      setDir("prev");
-      setStep(step - 1);
-    }
-  };
+  }, [open, handleClose, handleNext, handlePrev]);
 
   if (!mounted || !open) return null;
 
@@ -116,18 +145,37 @@ export default function WelcomeOnboarding() {
   const isLast = step === STEPS.length - 1;
 
   return (
-    <div className="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
-      <div className="welcome-backdrop" onClick={handleClose} aria-hidden="true" />
+    <div
+      className="welcome-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="welcome-title"
+    >
+      <div
+        className="welcome-backdrop"
+        onClick={handleClose}
+        aria-hidden="true"
+      />
 
       <div className="welcome-card">
         <header className="welcome-masthead">
-          <span className="welcome-masthead-left">VOL.&nbsp;01&nbsp;—&nbsp;GUIDE</span>
-          <span className="welcome-masthead-mark" aria-hidden="true">ا</span>
-          <span className="welcome-masthead-right">PORTFOLIO&nbsp;·&nbsp;۱۴۰۵</span>
+          <span className="welcome-masthead-left">
+            VOL.&nbsp;01&nbsp;—&nbsp;GUIDE
+          </span>
+          <span className="welcome-masthead-mark" aria-hidden="true">
+            ا
+          </span>
+          <span className="welcome-masthead-right">
+            PORTFOLIO&nbsp;·&nbsp;۱۴۰۵
+          </span>
         </header>
 
         {/* Progress dots */}
-        <div className="welcome-progress" role="tablist" aria-label="مراحل معرفی">
+        <div
+          className="welcome-progress"
+          role="tablist"
+          aria-label="مراحل معرفی"
+        >
           {STEPS.map((s, i) => (
             <button
               key={s.id}
@@ -135,8 +183,13 @@ export default function WelcomeOnboarding() {
               role="tab"
               aria-selected={i === step}
               aria-label={`مرحله ${i + 1}`}
-              className={`welcome-progress-dot ${i === step ? "is-active" : ""} ${i < step ? "is-done" : ""}`}
-              onClick={() => { setDir(i > step ? "next" : "prev"); setStep(i); }}
+              className={`welcome-progress-dot ${
+                i === step ? "is-active" : ""
+              } ${i < step ? "is-done" : ""}`}
+              onClick={() => {
+                setDir(i > step ? "next" : "prev");
+                setStep(i);
+              }}
             />
           ))}
         </div>
@@ -170,17 +223,29 @@ export default function WelcomeOnboarding() {
         <footer className="welcome-footer">
           <div className="welcome-footer-nav">
             {!isFirst && (
-              <button type="button" className="welcome-nav-btn welcome-nav-prev" onClick={handlePrev}>
+              <button
+                type="button"
+                className="welcome-nav-btn welcome-nav-prev"
+                onClick={handlePrev}
+              >
                 <span aria-hidden="true">→</span>
                 قبلی
               </button>
             )}
-            <button type="button" className="welcome-nav-btn welcome-nav-next" onClick={handleNext}>
+            <button
+              type="button"
+              className="welcome-nav-btn welcome-nav-next"
+              onClick={handleNext}
+            >
               {isLast ? "بزن بریم" : "بعدی"}
               <span aria-hidden="true">←</span>
             </button>
           </div>
-          <button type="button" className="welcome-skip" onClick={handleClose}>
+          <button
+            type="button"
+            className="welcome-skip"
+            onClick={handleClose}
+          >
             رد کردن
           </button>
         </footer>
