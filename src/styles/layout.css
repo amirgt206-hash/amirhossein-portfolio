@@ -11,11 +11,6 @@
   inset: 0 0 auto;
   z-index: 100;
   padding-block: 14px;
-  /* Performance: padding removed from transition to avoid layout thrashing */
-}
-
-.site-nav.is-scrolled {
-  /* Performance: no padding change — visual state handled on .nav-inner */
 }
 
 .nav-inner {
@@ -72,7 +67,6 @@
     transform var(--duration-normal) var(--ease-out);
 }
 
-/* Performance-safe subtle shrink on scroll — composited transform only */
 .site-nav.is-scrolled .brand-mark {
   transform: scale(0.92);
 }
@@ -1116,26 +1110,69 @@
 }
 
 /* ============================================================
-   PERFORMANCE OVERRIDE
+   PERFORMANCE OVERRIDE — Non-composited padding fix
    ────────────────────────────────────────────────────────────
-   Neutralizes non-composited `padding`/`padding-block` animations
-   from enhancements.css and mobile-nav-v2.css that Lighthouse
-   flagged as layout thrashing. Only visual state (background,
-   border, shadow, transform) is animated now.
+   Lighthouse flagged `padding-bottom` and `padding-top` on
+   `header.site-nav` and `.nav-inner` as non-composited
+   animations. These cause layout thrashing on every scroll
+   direction change.
+
+   Fix strategy:
+   - Lock `.site-nav` padding to a single value (no change)
+   - Remove padding from `.nav-inner` transitions entirely
+   - Keep `transform`/`opacity` transitions on `.site-nav`
+     so the smart-hide behavior still works (they are composited)
+   - Keep `background`/`border`/`box-shadow` on `.nav-inner`
+     so the "scrolled" state is still visually clear
+   ────────────────────────────────────────────────────────────
+   Loaded AFTER layout.css but BEFORE enhancements.css — the
+   `!important` flags beat every downstream override.
    ============================================================ */
+
 .site-nav,
 .site-nav.is-scrolled {
   padding-block: 14px !important;
   transition:
-    background-color var(--duration-normal) var(--ease-out),
-    opacity var(--duration-normal) var(--ease-out) !important;
+    transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 .site-nav .nav-inner,
 .site-nav.is-scrolled .nav-inner {
-  padding-block: 0 !important;
   transition:
     background-color var(--duration-normal) var(--ease-out),
     border-color var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out) !important;
+}
+/* ============================================================
+   NAV — MagneticButton vertical alignment fix
+   ────────────────────────────────────────────────────────────
+   `MagneticButton` wraps children in two inline-block divs
+   (.magnetic / .magnetic-inner). Because Persian text has a
+   higher visual center inside its em box, the inline baseline
+   alignment pushes the button slightly above the nav center.
+   Fix: force the wrappers to be inline-flex with centered
+   alignment so the pill itself becomes the aligned unit.
+   ============================================================ */
+
+.nav-actions .magnetic,
+.nav-actions .magnetic-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.nav-actions .magnetic-inner {
+  height: 100%;
+}
+
+.nav-order-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding-block: 0;
+  line-height: 1;
+  vertical-align: middle;
 }
