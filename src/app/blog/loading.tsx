@@ -1,3 +1,5 @@
+import { BlogGridSkeleton } from "@/components/Skeletons";
+
 export default function Loading() {
   return (
     <main id="main" className="blog-page">
@@ -8,15 +10,7 @@ export default function Loading() {
           <div className="skeleton-line skeleton-line-lg" />
           <div className="skeleton-line skeleton-line-md" />
         </div>
-        <div className="blog-grid">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="blog-card-skeleton">
-              <div className="skeleton-line skeleton-line-sm" />
-              <div className="skeleton-line skeleton-line-md" />
-              <div className="skeleton-line skeleton-line-lg" />
-            </div>
-          ))}
-        </div>
+        <BlogGridSkeleton count={3} />
       </div>
     </main>
   );

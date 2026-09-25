@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type Item = {
   href: string;
@@ -54,7 +55,7 @@ const ITEMS: Item[] = [
   {
     href: "#portfolio",
     section: "portfolio",
-    label: "نمونه‌کارها",
+    label: "نمونه‌ها",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -106,7 +107,6 @@ const ITEMS: Item[] = [
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
-        suppressHydrationWarning
       >
         <circle cx="12" cy="8" r="4" />
         <path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1" />
@@ -116,6 +116,7 @@ const ITEMS: Item[] = [
 ];
 
 export default function MobileNav() {
+  const pathname = usePathname();
   const [active, setActive] = useState<string>("home");
   const [hidden, setHidden] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -124,14 +125,17 @@ export default function MobileNav() {
     setMounted(true);
   }, []);
 
-  /* ── Active section tracking ── */
+  /* ── Active section tracking (home page only) ── */
   useEffect(() => {
     if (!mounted) return;
     if (typeof IntersectionObserver === "undefined") return;
+    if (pathname !== "/") return;
 
     const sections = ITEMS.filter((i) => !i.isPage)
       .map((i) => document.getElementById(i.section))
       .filter((el): el is HTMLElement => el !== null);
+
+    if (!sections.length) return;
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -147,7 +151,7 @@ export default function MobileNav() {
 
     sections.forEach((s) => io.observe(s));
     return () => io.disconnect();
-  }, [mounted]);
+  }, [mounted, pathname]);
 
   /* ── Hide when footer is visible ── */
   useEffect(() => {
@@ -165,6 +169,8 @@ export default function MobileNav() {
     return () => io.disconnect();
   }, [mounted]);
 
+  const isBlogPage = pathname?.startsWith("/blog");
+
   return (
     <nav
       className={`mobile-nav${hidden ? " is-hidden" : ""}`}
@@ -173,13 +179,29 @@ export default function MobileNav() {
     >
       <ul className="mobile-nav-list">
         {ITEMS.map((item) => {
-          const isActive = !item.isPage && active === item.section;
+          /* Active logic:
+             - Blog link: active if we're on /blog or /blog/[slug]
+             - Others: active only if we're on home and section is in view */
+          const isActive = item.isPage
+            ? isBlogPage
+            : pathname === "/" && active === item.section;
+
           const className = `mobile-nav-item${isActive ? " is-active" : ""}`;
+
+          /* Hash links should navigate home if not there */
+          const resolvedHref =
+            !item.isPage && pathname !== "/"
+              ? `/${item.href}`
+              : item.href;
 
           if (item.isPage) {
             return (
               <li key={item.section}>
-                <Link href={item.href} className={className}>
+                <Link
+                  href={item.href}
+                  className={className}
+                  aria-current={isActive ? "page" : undefined}
+                >
                   <span className="mobile-nav-icon">{item.icon}</span>
                   <span className="mobile-nav-label">{item.label}</span>
                 </Link>
@@ -190,9 +212,9 @@ export default function MobileNav() {
           return (
             <li key={item.section}>
               <a
-                href={item.href}
+                href={resolvedHref}
                 className={className}
-                aria-current={isActive ? "true" : undefined}
+                aria-current={isActive ? "location" : undefined}
               >
                 <span className="mobile-nav-icon">{item.icon}</span>
                 <span className="mobile-nav-label">{item.label}</span>
@@ -205,7 +227,7 @@ export default function MobileNav() {
           <Link
             href="/order"
             className="mobile-nav-cta"
-            aria-label="سفارش پروژه"
+            aria-label="شروع پروژه"
           >
             <span className="mobile-nav-cta-icon" aria-hidden="true">
               <svg
@@ -219,7 +241,7 @@ export default function MobileNav() {
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </span>
-            <span className="mobile-nav-label">سفارش</span>
+            <span className="mobile-nav-label">شروع</span>
           </Link>
         </li>
       </ul>

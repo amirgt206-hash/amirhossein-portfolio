@@ -1,4 +1,5 @@
 import Link from "next/link";
+import MagneticButton from "@/components/MagneticButton";
 
 export default function FinalCTA() {
   const contactEmail = process.env.PROJECT_CONTACT_EMAIL;
@@ -10,7 +11,6 @@ export default function FinalCTA() {
     >
       <div className="container">
         <div className="final-cta reveal">
-          {/* ── Left column: text + CTAs ── */}
           <div className="final-cta-content">
             <span className="section-index">06 — START A PROJECT</span>
 
@@ -27,14 +27,24 @@ export default function FinalCTA() {
             </p>
 
             <div className="final-cta-actions">
-              <Link href="/order" className="button button-primary button-lg">
-                شروع پروژه
-                <span aria-hidden="true">←</span>
-              </Link>
+              <MagneticButton strength={0.22} radius={75}>
+                <Link
+                  href="/order"
+                  className="button button-primary button-lg"
+                >
+                  شروع پروژه
+                  <span aria-hidden="true">←</span>
+                </Link>
+              </MagneticButton>
 
-              <a href="#portfolio" className="button button-secondary button-lg">
-                دیدن نمونه‌کارها
-              </a>
+              <MagneticButton strength={0.15} radius={60}>
+                <a
+                  href="#portfolio"
+                  className="button button-secondary button-lg"
+                >
+                  دیدن نمونه‌کارها
+                </a>
+              </MagneticButton>
             </div>
 
             {contactEmail && (
@@ -47,7 +57,6 @@ export default function FinalCTA() {
             )}
           </div>
 
-          {/* ── Right column: brief info panel ── */}
           <aside className="final-cta-aside" aria-hidden="true">
             <div className="final-cta-aside-item">
               <span className="final-cta-aside-label">پاسخ</span>

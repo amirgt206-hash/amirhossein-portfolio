@@ -11,8 +11,9 @@ import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 import RevealObserver from "@/components/RevealObserver";
+import SectionSwipeHandler from "@/components/SectionSwipeHandler";
+import SwipeHint from "@/components/SwipeHint";
 
-/* ── Heavy client component — lazy-loaded with SSR kept on for SEO ── */
 const Portfolio = dynamic(() => import("@/components/Portfolio"), {
   ssr: true,
   loading: () => (
@@ -52,6 +53,8 @@ export default function Home() {
       <Footer />
       <BackToTop />
       <RevealObserver />
+      <SectionSwipeHandler />
+      <SwipeHint />
     </>
   );
 }

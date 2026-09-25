@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SoundToggle from "@/components/SoundToggle";
 
 const footerNav = [
   { label: "خانه", href: "/" },
@@ -6,10 +7,9 @@ const footerNav = [
   { label: "نمونه‌کارها", href: "/#portfolio" },
   { label: "بلاگ", href: "/blog" },
   { label: "درباره من", href: "/#about" },
-  { label: "سفارش پروژه", href: "/order" },
+  { label: "شروع پروژه", href: "/order" },
 ];
 
-/* سال شمسی جاری — خودکار از تاریخ سیستم محاسبه می‌شود */
 const CURRENT_PERSIAN_YEAR = new Intl.DateTimeFormat("fa-IR", {
   year: "numeric",
 })
@@ -23,7 +23,6 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
-        {/* ── CTA Block ── */}
         <div className="footer-cta">
           <span className="section-index" style={{ marginBottom: 0 }}>
             NEXT — STEP
@@ -41,13 +40,15 @@ export default function Footer() {
               <span aria-hidden="true">←</span>
             </Link>
 
-            <a href="#portfolio" className="button button-secondary button-lg">
-              مشاهده نمونه‌کارها
+            <a
+              href="#portfolio"
+              className="button button-secondary button-lg"
+            >
+              دیدن نمونه‌کارها
             </a>
           </div>
         </div>
 
-        {/* ── Main footer ── */}
         <div className="footer-main">
           <div className="footer-brand-block">
             <div className="footer-brand">
@@ -62,8 +63,8 @@ export default function Footer() {
             </div>
 
             <p className="footer-tagline">
-              طراحی و توسعه وب‌سایت‌های اختصاصی، همراه با خلق تجربه‌های
-              بصری و تبلیغاتی با کمک هوش مصنوعی.
+              طراحی و توسعه وب‌سایت‌های اختصاصی — با تجربه‌های بصری و
+              تبلیغاتی متفاوت، به کمک هوش مصنوعی.
             </p>
 
             <span className="footer-signature" aria-hidden="true">
@@ -97,7 +98,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ── Bottom bar ── */}
         <div className="footer-bottom">
           <span className="footer-bottom-item">
             © {CURRENT_PERSIAN_YEAR} — تمامی حقوق محفوظ است.
@@ -107,9 +107,17 @@ export default function Footer() {
             DESIGN · DEVELOPMENT · AI
           </span>
 
-          <a href="#home" className="footer-back-top">
-            بازگشت به بالا ↑
-          </a>
+          <div className="footer-bottom-actions">
+            <SoundToggle />
+
+            <a
+              href="#home"
+              className="footer-back-top"
+              aria-label="بازگشت به بالای صفحه"
+            >
+              بازگشت به بالا ↑
+            </a>
+          </div>
         </div>
       </div>
     </footer>

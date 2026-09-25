@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
+import MagneticButton from "@/components/MagneticButton";
 
 const navItems = [
   { label: "خانه", href: "#home" },
@@ -12,37 +14,88 @@ const navItems = [
   { label: "بلاگ", href: "/blog" },
 ];
 
+/* Thresholds for smart header */
+const SCROLL_HIDE_THRESHOLD = 120; // px scrolled before we allow hiding
+const SCROLL_DELTA = 8; // minimum delta to trigger state change
+
 export default function Nav() {
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [headerHidden, setHeaderHidden] = useState(false);
 
-  /* ── Scroll state + progress ── */
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
+  /* ── Scroll handler: progress + smart hide ── */
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const y = window.scrollY;
 
+      /* Update scrolled state */
+      setScrolled(y > 20);
+
+      /* Scroll progress */
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      const pct =
-        docHeight > 0 ? Math.min(1, window.scrollY / docHeight) : 0;
+      const pct = docHeight > 0 ? Math.min(1, y / docHeight) : 0;
       setScrollProgress(pct);
+
+      /* Smart hide — only after threshold, only if delta is meaningful */
+      const delta = y - lastScrollY.current;
+
+      if (Math.abs(delta) > SCROLL_DELTA) {
+        if (y > SCROLL_HIDE_THRESHOLD && delta > 0) {
+          /* Scrolling down */
+          setHeaderHidden(true);
+        } else if (delta < 0) {
+          /* Scrolling up */
+          setHeaderHidden(false);
+        }
+        lastScrollY.current = y;
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      window.requestAnimationFrame(() => {
+        handleScroll();
+        ticking.current = false;
+      });
     };
 
     handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", handleScroll);
     };
   }, []);
 
-  /* ── Active section ── */
+  /* ── Always show header when user reaches bottom of page ── */
+  useEffect(() => {
+    const handleBottom = () => {
+      const y = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight - y < 200) {
+        setHeaderHidden(false);
+      }
+    };
+    window.addEventListener("scroll", handleBottom, { passive: true });
+    return () => window.removeEventListener("scroll", handleBottom);
+  }, []);
+
+  /* ── Active section tracking (only on home page) ── */
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
+    if (pathname !== "/") return;
 
     const sections = navItems
       .filter((item) => item.href.startsWith("#"))
@@ -69,7 +122,7 @@ export default function Nav() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
   const sectionItems = navItems.filter((item) => item.href.startsWith("#"));
   const activeIndex = Math.max(
@@ -79,15 +132,22 @@ export default function Nav() {
   const activeNumber = String(activeIndex + 1).padStart(2, "0");
   const totalNumber = String(sectionItems.length).padStart(2, "0");
 
+  /* ── Smart hide should not apply on blog pages ── */
+  const isBlogPage = pathname?.startsWith("/blog");
+  const shouldHide = !isBlogPage && headerHidden;
+
   return (
-    <header className={`site-nav ${scrolled ? "is-scrolled" : ""}`}>
+    <header
+      className={`site-nav${scrolled ? " is-scrolled" : ""}${
+        shouldHide ? " is-hidden" : ""
+      }`}
+    >
       <div className="container">
         <div className="nav-inner">
-          {/* ── Brand ── */}
           <a
-            href="#home"
+            href="/#home"
             className="brand"
-            aria-label="امیرحسین شرکائی — Amirhossein Sherkaei"
+            aria-label="امیرحسین شرکائی — بازگشت به بالای صفحه"
           >
             <span className="brand-mark" aria-hidden="true">
               ا
@@ -103,8 +163,7 @@ export default function Nav() {
             </span>
           </a>
 
-          {/* ── Desktop nav ── */}
-          <nav className="desktop-nav" aria-label="منوی اصلی">
+          <nav className="desktop-nav" aria-label="منوی اصلی سایت">
             <span className="desktop-nav-label" aria-hidden="true">
               MENU
             </span>
@@ -112,16 +171,27 @@ export default function Nav() {
             <div className="desktop-nav-list">
               {navItems.map((item) => {
                 const isHash = item.href.startsWith("#");
+                const isBlogLink = item.href === "/blog";
                 const sectionId = isHash ? item.href.slice(1) : "";
-                const isActive = isHash && activeSection === sectionId;
+
+                /* Active logic:
+                   - Hash links: only active if we're on home and section matches
+                   - /blog: active if pathname starts with /blog */
+                const isActive = isHash
+                  ? pathname === "/" && activeSection === sectionId
+                  : isBlogLink
+                  ? pathname.startsWith("/blog")
+                  : false;
+
                 const className = isActive ? "active" : "";
 
                 if (isHash) {
                   return (
                     <a
                       key={item.href}
-                      href={item.href}
+                      href={pathname === "/" ? item.href : `/${item.href}`}
                       className={className}
+                      aria-current={isActive ? "true" : undefined}
                     >
                       {item.label}
                     </a>
@@ -133,6 +203,7 @@ export default function Nav() {
                     key={item.href}
                     href={item.href}
                     className={className}
+                    aria-current={isActive ? "page" : undefined}
                   >
                     {item.label}
                   </Link>
@@ -160,19 +231,20 @@ export default function Nav() {
             </span>
           </nav>
 
-          {/* ── Actions ── */}
           <div className="nav-actions">
-            <Link href="/order" className="nav-order-button">
-              سفارش پروژه
-            </Link>
+            <MagneticButton strength={0.15} radius={50}>
+              <Link href="/order" className="nav-order-button">
+                شروع پروژه
+              </Link>
+            </MagneticButton>
 
             <button
               type="button"
               className="theme-toggle"
               aria-label={
                 theme === "dark"
-                  ? "فعال کردن حالت روشن"
-                  : "فعال کردن حالت تاریک"
+                  ? "حالت روشن رو فعال کن"
+                  : "حالت تاریک رو فعال کن"
               }
               aria-pressed={theme === "dark"}
               onClick={toggleTheme}
@@ -206,7 +278,6 @@ export default function Nav() {
         </div>
       </div>
 
-      {/* ── Scroll progress hairline ── */}
       <div
         className="nav-progress"
         style={{ "--nav-progress": scrollProgress } as React.CSSProperties}

@@ -14,6 +14,16 @@ type ProjectViewerProps = {
   onClose: () => void;
 };
 
+/* ═══════════════════════════════════════════════════════════
+   PROJECT VIEWER
+   ------------------------------------------------------------
+   Desktop: centered modal with grid layout
+   Mobile: bottom sheet with drag-to-close
+   ═══════════════════════════════════════════════════════════ */
+
+const DRAG_CLOSE_THRESHOLD = 120; // px
+const DRAG_VELOCITY_THRESHOLD = 0.5; // px/ms
+
 export default function ProjectViewer({
   project,
   index,
@@ -25,21 +35,43 @@ export default function ProjectViewer({
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
+
   const [shareLabel, setShareLabel] = useState("اشتراک‌گذاری");
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
-  /* ── فقط بعد از mount روی کلاینت رندر می‌شود (createPortal نیاز به DOM دارد) ── */
+  const dragState = useRef({
+    startY: 0,
+    startTime: 0,
+    currentY: 0,
+  });
+
+  /* ── Mounted gate for portal ── */
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  /* ── Body scroll lock + focus trap + keyboard navigation ── */
+  /* ── Detect mobile ── */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 720px)").matches);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  /* ── Body scroll lock + keyboard nav + focus trap ── */
   useEffect(() => {
     if (!mounted) return;
 
     lastFocusedRef.current = document.activeElement as HTMLElement | null;
 
-    /* iOS-safe scroll lock */
     const scrollbarWidth =
       window.innerWidth - document.documentElement.clientWidth;
     const prevHtmlOverflow = document.documentElement.style.overflow;
@@ -109,10 +141,83 @@ export default function ProjectViewer({
     };
   }, [mounted, onClose, onNext, onPrev]);
 
+  /* ── Reset share label on project change ── */
   useEffect(() => {
     setShareLabel("اشتراک‌گذاری");
+    setDragY(0);
   }, [project.id]);
 
+  /* ═══════════════════════════════════════════════════════════
+     DRAG-TO-CLOSE (mobile only)
+     ═══════════════════════════════════════════════════════════ */
+  const handleDragStart = (clientY: number) => {
+    if (!isMobile) return;
+    setIsDragging(true);
+    dragState.current = {
+      startY: clientY,
+      startTime: Date.now(),
+      currentY: clientY,
+    };
+  };
+
+  const handleDragMove = (clientY: number) => {
+    if (!isMobile || !isDragging) return;
+    dragState.current.currentY = clientY;
+    const delta = clientY - dragState.current.startY;
+    /* Only allow dragging downward */
+    setDragY(Math.max(0, delta));
+  };
+
+  const handleDragEnd = () => {
+    if (!isMobile || !isDragging) return;
+
+    const delta = dragState.current.currentY - dragState.current.startY;
+    const elapsed = Date.now() - dragState.current.startTime;
+    const velocity = Math.abs(delta) / Math.max(elapsed, 1);
+
+    if (
+      delta > DRAG_CLOSE_THRESHOLD ||
+      (delta > 40 && velocity > DRAG_VELOCITY_THRESHOLD)
+    ) {
+      /* Close */
+      onClose();
+    } else {
+      /* Snap back */
+      setDragY(0);
+    }
+
+    setIsDragging(false);
+  };
+
+  /* Touch events on drag handle */
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleDragStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    handleDragMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  /* Pointer events (for hybrid devices) */
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return; // handled by touch events
+    handleDragStart(e.clientY);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return;
+    handleDragMove(e.clientY);
+  };
+
+  const handlePointerUp = () => {
+    handleDragEnd();
+  };
+
+  /* ── Share handler ── */
   const handleShare = async () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
     try {
@@ -136,10 +241,18 @@ export default function ProjectViewer({
 
   if (!mounted) return null;
 
+  /* ── Compute drag-dependent values ── */
+  const dragProgress = Math.min(dragY / DRAG_CLOSE_THRESHOLD, 1);
+  const sheetTransform = isMobile
+    ? `translateY(${dragY}px)`
+    : undefined;
+  const backdropOpacity = 1 - dragProgress * 0.6;
+
   const modalContent = (
     <div
       className="project-modal"
       role="presentation"
+      data-dragging={isDragging ? "true" : "false"}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -150,7 +263,28 @@ export default function ProjectViewer({
         role="dialog"
         aria-modal="true"
         aria-labelledby="project-modal-title"
+        style={
+          {
+            transform: sheetTransform,
+            "--backdrop-opacity": backdropOpacity,
+          } as React.CSSProperties
+        }
       >
+        {/* ═══════ Mobile Drag Handle ═══════ */}
+        <div
+          className="project-modal-drag-handle"
+          aria-hidden="true"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
+          <span className="project-modal-drag-bar" />
+        </div>
+
         {/* ═══════ Navigation bar ═══════ */}
         <div className="project-modal-nav">
           <div className="project-modal-nav-left">
@@ -244,10 +378,7 @@ export default function ProjectViewer({
           </div>
 
           <div className="project-modal-body">
-            <span
-              className="section-index"
-              style={{ marginBottom: 0 }}
-            >
+            <span className="section-index" style={{ marginBottom: 0 }}>
               PROJECT · {project.id.split("-").pop()}
             </span>
 
@@ -361,13 +492,7 @@ export default function ProjectViewer({
               </div>
               <div>
                 <span>سال</span>
-                <strong>
-  {project.year ??
-    new Intl.DateTimeFormat("fa-IR", { year: "numeric" })
-      .format(new Date())
-      .replace(/[^\u06F0-\u06F9]/g, "")
-      .slice(0, 4)}
-</strong>
+                <strong>{project.year ?? "۱۴۰۵"}</strong>
               </div>
               <div>
                 <span>نقش</span>

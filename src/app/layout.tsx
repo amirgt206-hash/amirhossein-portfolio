@@ -2,32 +2,69 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 
 /* ═══════════════════════════════════════════════════════════
-   CSS — Order matters! Tokens → Base → Layout → Pages → Enhancements
+   CSS — Order matters!
    ═══════════════════════════════════════════════════════════ */
 
+/* 1. Design tokens */
 import "@/styles/tokens.css";
+
+/* 2. Motion system */
+import "@/styles/motion.css";
+
+/* 3. Base */
 import "@/styles/base.css";
+
+/* 4. Magnetic buttons */
+import "@/styles/magnetic.css";
+
+/* 5. Reveal system */
+import "@/styles/reveal.css";
+
+/* 6. Mobile touch feedback */
+import "@/styles/mobile-touch.css";
+/* بعد از mobile-touch.css: */
+import "@/styles/mobile-modal.css";
+import "@/styles/mobile-forms.css";
+import "@/styles/mobile-typography.css";
+import "@/styles/mobile-nav-v2.css";
+import "@/styles/perceived-performance.css";
+import "@/styles/adaptive-navigation.css";
+import "@/styles/form-progress.css";
+import "@/styles/sensory.css";
+
+/* 7. Layout */
 import "@/styles/layout.css";
+
+/* 8. Layout more */
 import "@/styles/layout-more.css";
+
+/* 9. Footer effects */
 import "@/styles/footer-effects.css";
+
+/* 10. Pages */
 import "@/styles/pages.css";
+
+/* 11. Responsive */
 import "@/styles/responsive.css";
+
+/* 12. Enhancements */
 import "@/styles/enhancements.css";
+
+/* 13. Mobile fix */
 import "@/styles/mobile-fix.css";
+
+/* 14. Blog */
 import "@/app/blog/blog.css";
+
+/* 15. Theme toggle */
 import "@/styles/theme-toggle.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import TouchFeedback from "@/components/TouchFeedback";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { allSchemas } from "@/lib/schema";
 
-/* ─────────────────────────────────────────────────────────────
-   VARIABLE FONT — Vazirmatn
-   - No `weight` field → Next.js auto-loads variable font
-   - Weight axis 100–900 available at runtime
-   - Only Arabic + Latin subsets (saves ~56KB vs full)
-   ───────────────────────────────────────────────────────────── */
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
   variable: "--font-vazirmatn",
@@ -187,6 +224,7 @@ export default function RootLayout({
           پرش به محتوای اصلی
         </a>
         <ThemeProvider>{children}</ThemeProvider>
+        <TouchFeedback />
         <Analytics />
         <SpeedInsights />
       </body>

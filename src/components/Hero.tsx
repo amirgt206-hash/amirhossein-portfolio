@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import MagneticButton from "@/components/MagneticButton";
 
 const ROLES = ["طراح وب", "توسعه‌دهنده فرانت‌اند", "خلاق دیجیتال با AI"];
 const ROTATION_MS = 3400;
@@ -19,7 +20,6 @@ const MARQUEE_WORDS = [
   "STORYTELLING",
 ];
 
-/* سال شمسی جاری — خودکار از تاریخ سیستم محاسبه می‌شود */
 const CURRENT_PERSIAN_YEAR = new Intl.DateTimeFormat("fa-IR", {
   year: "numeric",
 })
@@ -46,13 +46,11 @@ export default function Hero() {
 
   return (
     <section id="home" className="hero-section">
-      {/* ═══════ EDITORIAL CORNER MARKS ═══════ */}
       <span className="hero-corner hero-corner-tl" aria-hidden="true" />
       <span className="hero-corner hero-corner-tr" aria-hidden="true" />
       <span className="hero-corner hero-corner-bl" aria-hidden="true" />
       <span className="hero-corner hero-corner-br" aria-hidden="true" />
 
-      {/* ═══════ VERTICAL SIGNATURE RAIL ═══════ */}
       <div className="hero-rail" aria-hidden="true">
         <span className="hero-rail-line" />
         <span className="hero-rail-text">
@@ -62,7 +60,6 @@ export default function Hero() {
       </div>
 
       <div className="hero-inner">
-        {/* ═══════ EDITORIAL MASTHEAD ═══════ */}
         <div className="hero-masthead">
           <span className="hero-masthead-left">
             VOL.&nbsp;01&nbsp;—&nbsp;ISSUE&nbsp;{CURRENT_PERSIAN_YEAR}
@@ -125,15 +122,19 @@ export default function Hero() {
         </ul>
 
         <div className="hero-actions">
-          <Link href="/order" className="btn btn-primary">
-            سفارش پروژه
-            <span aria-hidden="true">←</span>
-          </Link>
-          <a href="#portfolio" className="btn btn-secondary">
-            مشاهده نمونه‌کارها
-          </a>
+          <MagneticButton strength={0.2} radius={70}>
+            <Link href="/order" className="btn btn-primary">
+              سفارش پروژه
+              <span aria-hidden="true">←</span>
+            </Link>
+          </MagneticButton>
 
-          {/* ═══════ HAND-DRAWN ARROW ═══════ */}
+          <MagneticButton strength={0.15} radius={60}>
+            <a href="#portfolio" className="btn btn-secondary">
+              مشاهده نمونه‌کارها
+            </a>
+          </MagneticButton>
+
           <span className="hero-arrow" aria-hidden="true">
             <svg
               viewBox="0 0 60 60"
@@ -169,7 +170,6 @@ export default function Hero() {
         </footer>
       </div>
 
-      {/* ═══════ MARQUEE STRIP ═══════ */}
       <div className="hero-marquee" aria-hidden="true">
         <div className="hero-marquee-track">
           {[...MARQUEE_WORDS, ...MARQUEE_WORDS].map((word, i) => (
